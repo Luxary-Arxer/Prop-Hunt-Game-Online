@@ -1,5 +1,5 @@
 # Prop Hunt Game
-Creación de prototipo de videojuego prop hunt online en la version  2022.3.XfY  en unity
+Creación de prototipo de videojuego prop hunt online en la version  2022.3.33f1  en unity
 
 Cada partida se compondrá por 2 equipos y un timer el cual ira
 descendiendo hasta 0.
