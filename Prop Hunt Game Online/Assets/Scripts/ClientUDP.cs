@@ -18,6 +18,7 @@ public class ClientUDP : MonoBehaviour
 
     public void Awake()
     {
+        Debug.Log("11");
         IPServer = JoinInformation.scene1.serverIP;
         Debug.Log(IPServer);
         //UItext = UItextObj.GetComponent<TextMeshProUGUI>();
