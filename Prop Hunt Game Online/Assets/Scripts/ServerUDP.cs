@@ -14,6 +14,15 @@ public class ServerUDP : MonoBehaviour
     public GameObject UItextObj;
     TextMeshProUGUI UItext;
 
+    //public DisplayPlayerName Name;
+    public string NamePlayer = "No Name";
+
+    private void Awake()
+    {
+        NamePlayer = ChangeScene.server_Home.serverName;
+        Debug.Log(NamePlayer);
+    }
+
     void Start()
     {
         //UItext = UItextObj.GetComponent<TextMeshProUGUI>();
