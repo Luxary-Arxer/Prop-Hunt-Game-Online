@@ -9,9 +9,9 @@ public class ClientUDP : MonoBehaviour
 {
     Socket socket;
     public GameObject UItextObj;
-    TextMeshProUGUI UItext;
+    //TextMeshProUGUI UItext;
     string clientText;
-    private string IPServer;
+    public string IPServer;
 
     //public DisplayPlayerName Name;
     public string NamePlayer = "No Name";
@@ -19,7 +19,7 @@ public class ClientUDP : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UItext = UItextObj.GetComponent<TextMeshProUGUI>();
+        //UItext = UItextObj.GetComponent<TextMeshProUGUI>();
         NamePlayer = DisplayPlayerName.NamePlayer;
     }
 
@@ -31,7 +31,7 @@ public class ClientUDP : MonoBehaviour
 
     void Update()
     {
-        UItext.text = clientText;
+        Send();
     }
 
     void Send()
