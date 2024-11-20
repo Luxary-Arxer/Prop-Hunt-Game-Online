@@ -20,6 +20,7 @@ public class ServerUDP : MonoBehaviour
     private void Awake()
     {
         NamePlayer = ChangeScene.server_Home.serverName;
+        read_Name(NamePlayer);
         Debug.Log(NamePlayer);
     }
 
@@ -97,5 +98,11 @@ public class ServerUDP : MonoBehaviour
         byte[] data = Encoding.ASCII.GetBytes("Ping");
         socket.SendTo(data, Remote);
         //serverText += "\nPing sent to " + Remote.ToString();
+    }
+    public void read_Name(string Name)
+    {
+        NamePlayer = Name;
+        DisplayPlayerName.NamePlayer_1 = NamePlayer;
+        Debug.Log(NamePlayer);
     }
 }

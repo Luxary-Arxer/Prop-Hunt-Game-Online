@@ -23,6 +23,7 @@ public class JoinInformation : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        clientName = "No Name";
     }
 
     public void read_IP(string IP)
@@ -34,13 +35,12 @@ public class JoinInformation : MonoBehaviour
     public void read_Name(string Name)
     {
         clientName = imputField_Name.text;
+                
         Debug.Log(clientName);
     }
 
     public void changeScene(string scene)
     {
-
-
 
         SceneManager.LoadScene(scene);
     }

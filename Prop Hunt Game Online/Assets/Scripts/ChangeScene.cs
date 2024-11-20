@@ -21,6 +21,7 @@ public class ChangeScene : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        serverName = "No Name";
     }
     public void read_Name(string Name)
     {
