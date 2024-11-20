@@ -929,3 +929,8 @@ Start importing Assets/Texturas/SkySeries Freebie/Materials/FluffballDay4k.mat u
  -> (artifact id: '72ffee5c284ef1208482f22d5bd97cb6') in 0.008434 seconds
 Number of updated asset objects reloaded before import = 0
 Number of asset objects unloaded after import = 1
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+TcpMessagingSession - receive error: operation aborted. errorcode: 995, details: La operación de E/S se anuló por una salida de subproceso o por una solicitud de aplicación.
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0
