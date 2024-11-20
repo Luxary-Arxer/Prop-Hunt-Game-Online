@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System; // Asegúrate de incluir este espacio de nombres
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
@@ -47,5 +48,26 @@ public class ServerUDP : MonoBehaviour
                     float y = float.Parse(positionData[1]);
                     float z = float.Parse(positionData[2]);
 
+                    playerPosition = new Vector3(x, y, z);
+                    UpdateCubePosition(); // Actualizar la posición del cubo en el servidor
+                }
+            }
+            catch (SocketException e)
+            {
+                Debug.LogError("Error receiving data: " + e.Message);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error: " + e.Message); // Asegúrate de tener una segunda capa de catch
+            }
+        }
+    }
 
-
+    void UpdateCubePosition()
+    {
+        if (cube != null)
+        {
+            cube.transform.position = playerPosition;
+        }
+    }
+}
