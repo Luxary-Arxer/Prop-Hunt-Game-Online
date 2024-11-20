@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -31,19 +30,15 @@ public class JoinInformation : MonoBehaviour
         clientIP = imputField_IP.text;
         Debug.Log(clientIP);
     }
-    //Leer el nombre que te da el player
+
     public void read_Name(string Name)
     {
         clientName = imputField_Name.text;
-                
         Debug.Log(clientName);
     }
 
     public void changeScene(string scene)
     {
-
         SceneManager.LoadScene(scene);
     }
-
-
 }

@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ChangeScene : MonoBehaviour
 {
@@ -23,11 +23,13 @@ public class ChangeScene : MonoBehaviour
         }
         serverName = "No Name";
     }
+
     public void read_Name(string Name)
     {
         serverName = imputField_Name.text;
         Debug.Log(serverName);
     }
+
     public void changeScene(string scene)
     {
         SceneManager.LoadScene(scene);
