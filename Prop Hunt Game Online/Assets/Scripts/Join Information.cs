@@ -10,7 +10,7 @@ public class JoinInformation : MonoBehaviour
     public TMP_InputField imputField_IP;
     public string serverIP;
     public TMP_InputField imputField_Name;
-    public string serverName = "No Name";
+    public string serverName;
 
     private void Awake()
     {
@@ -24,7 +24,6 @@ public class JoinInformation : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
 
     public void read_IP(string IP)
     {
