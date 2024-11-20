@@ -8,23 +8,31 @@ using TMPro;
 public class ClientUDP : MonoBehaviour
 {
     Socket socket;
-    public GameObject UItextObj;
+    //public GameObject UItextObj;
     //TextMeshProUGUI UItext;
     string clientText;
     public string IPServer;
 
     //public DisplayPlayerName Name;
-    public string NamePlayer = "No Name";
+    public string NamePlayer;
 
+    public void Awake()
+    {
+        IPServer = JoinInformation.scene1.serverIP;
+        Debug.Log(IPServer);
+        //UItext = UItextObj.GetComponent<TextMeshProUGUI>();
+        NamePlayer = JoinInformation.scene1.serverName;
+        Debug.Log(NamePlayer);
+    }
     // Start is called before the first frame update
     void Start()
     {
-        //UItext = UItextObj.GetComponent<TextMeshProUGUI>();
-        NamePlayer = DisplayPlayerName.NamePlayer;
+        Send();
     }
 
     public void StartClient()
     {
+        
         Thread mainThread = new Thread(Send);
         mainThread.Start();
     }
