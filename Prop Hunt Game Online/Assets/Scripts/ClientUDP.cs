@@ -19,10 +19,10 @@ public class ClientUDP : MonoBehaviour
     public void Awake()
     {
         Debug.Log("11");
-        IPServer = JoinInformation.scene1.serverIP;
+        IPServer = JoinInformation.scene_Home.serverIP;
         Debug.Log(IPServer);
         //UItext = UItextObj.GetComponent<TextMeshProUGUI>();
-        NamePlayer = JoinInformation.scene1.serverName;
+        NamePlayer = JoinInformation.scene_Home.serverName;
         Debug.Log(NamePlayer);
     }
     // Start is called before the first frame update

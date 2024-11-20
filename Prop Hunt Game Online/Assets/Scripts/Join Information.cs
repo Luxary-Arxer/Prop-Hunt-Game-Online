@@ -6,11 +6,24 @@ using TMPro;
 
 public class JoinInformation : MonoBehaviour
 {
-    public static JoinInformation scene1;
+    public static JoinInformation scene_Home;
     public TMP_InputField imputField_IP;
     public string serverIP;
     public TMP_InputField imputField_Name;
     public string serverName = "No Name";
+
+    private void Awake()
+    {
+        if (scene_Home == null)
+        {
+            scene_Home = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
 
     public void read_IP(string IP)
