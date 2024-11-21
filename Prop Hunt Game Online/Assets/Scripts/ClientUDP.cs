@@ -3,19 +3,26 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 using System.Threading;
+using TMPro;
 
 public class ClientUDP : MonoBehaviour
 {
     Socket socket;
+
+    string clientText;
     public string IPServer;
     public string NamePlayer;
-    public GameObject player; // El objeto que representa al jugador (su avatar o similar)
 
     public void Awake()
     {
         IPServer = JoinInformation.client_Home.clientIP;
+
+        Debug.Log("Server IP: " + IPServer);
+
         NamePlayer = JoinInformation.client_Home.clientName;
-        Debug.Log(IPServer);
+        read_Name(NamePlayer);
+
+        Debug.Log("Player name: " + NamePlayer);
     }
 
     void Start()
@@ -23,33 +30,36 @@ public class ClientUDP : MonoBehaviour
         Send();
     }
 
+    public void StartClient()
+    {
+        Thread mainThread = new Thread(Send);
+        mainThread.Start();
+    }
+
     void Update()
     {
-        // Enviar la posición del jugador en cada frame
-        SendPlayerPosition();
+        Send();
     }
 
     void Send()
     {
+        // Send position data every frame
         IPEndPoint ipep = new IPEndPoint(IPAddress.Parse(IPServer), 9050);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        byte[] data = Encoding.ASCII.GetBytes("Player name: " + NamePlayer);
+
+        // Simulating player position (can be replaced with actual player position)
+        Vector3 playerPosition = transform.position;
+
+        string message = "Position: " + playerPosition.x + "," + playerPosition.y + "," + playerPosition.z;
+        byte[] data = Encoding.ASCII.GetBytes(message);
         socket.SendTo(data, ipep);
+
+        clientText = "Position sent to " + ipep.ToString() + ": " + message;
+        Debug.Log(clientText);
+
+        // Receive server response
         Thread receive = new Thread(Receive);
         receive.Start();
-    }
-
-    void SendPlayerPosition()
-    {
-        if (player != null)
-        {
-            Vector3 position = player.transform.position; // Obtener la posición del jugador
-            string positionMessage = position.x + "," + position.y + "," + position.z;
-
-            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse(IPServer), 9050);
-            byte[] data = Encoding.ASCII.GetBytes(positionMessage);
-            socket.SendTo(data, ipep);
-        }
     }
 
     void Receive()
@@ -64,12 +74,28 @@ public class ClientUDP : MonoBehaviour
             {
                 int recv = socket.ReceiveFrom(data, ref remote);
                 string receivedMessage = Encoding.ASCII.GetString(data, 0, recv);
-                Debug.Log("Message received: " + receivedMessage);
+                clientText += "\nMessage received from " + remote.ToString() + ": " + receivedMessage;
+
+                // Log the server's response
+                Debug.Log("Message received from server: " + receivedMessage);
             }
         }
         catch (SocketException e)
         {
-            Debug.LogError("Error receiving data: " + e.Message);
+            clientText += "\nError receiving data: " + e.Message;
         }
+    }
+
+    public void read_IP(string IP)
+    {
+        IPServer = IP;
+        Debug.Log("Server IP set to: " + IPServer);
+    }
+
+    public void read_Name(string Name)
+    {
+        NamePlayer = Name;
+        DisplayPlayerName.NamePlayer_1 = NamePlayer;
+        Debug.Log("Player name updated to: " + NamePlayer);
     }
 }
