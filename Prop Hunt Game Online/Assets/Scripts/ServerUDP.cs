@@ -9,6 +9,14 @@ public class ServerUDP : MonoBehaviour
 {
     Socket socket;
 
+    /*
+    public GameObject UItextObj;
+    TextMeshProUGUI UItext;
+    */
+    public GameObject cube; // El cubo que se moverá
+    private Vector3 playerPosition;
+
+
     public GameObject UItextObj;
     TextMeshProUGUI UItext;
 
@@ -24,23 +32,27 @@ public class ServerUDP : MonoBehaviour
     void Start()
     {
         startServer();
+        //UItext = UItextObj.GetComponent<TextMeshProUGUI>();
     }
 
     public void startServer()
     {
         Debug.Log("Starting UDP Server...");
 
+        //serverText = "Starting UDP Server...";
         IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9050);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        socket.Bind(ipep);
+        socket.Bind(ipep); // Vincula el socket al puerto 9050
+        Debug.Log("\nServer started on port 9050");
+        //serverText += "\nServer started on port 9050";
 
-        Debug.Log("Server started on port 9050");
-
-        // Create thread to receive messages
         Thread newConnection = new Thread(Receive);
         newConnection.Start();
     }
-
+    void Update()
+    {
+        //UItext.text = serverText;
+    }
     void Receive()
     {
         byte[] data = new byte[1024];
