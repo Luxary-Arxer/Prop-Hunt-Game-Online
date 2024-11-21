@@ -75,18 +75,18 @@ public class ServerUDP : MonoBehaviour
     void Update()
     {
         
-        string[] positionData = message.Split(':')[1].Trim().Split(',');
+        string[] positionData = message.Split(':')[1].Trim().Split("|");
         x = float.Parse(positionData[0]);
         y = float.Parse(positionData[1]);
         z = float.Parse(positionData[2]);
         newPosition = new Vector3(x, 2, z);
         playerCube.transform.position = newPosition;
         Debug.Log("Posición X " + newPosition.x);
-
+        Debug.Log("Posición Z " + newPosition.z);
     }
     void UpdatePlayerCubePosition(string message)
     {
-        string[] positionData = message.Split(':')[1].Trim().Split(',');
+        string[] positionData = message.Split(':')[1].Trim().Split('.');
 
         if (positionData.Length == 3)
         {

@@ -16,7 +16,7 @@ public class ClientUDP : MonoBehaviour
     {
         // Inicializar posición y mensaje
         playerPosition = transform.position;
-        message = "Position: " + playerPosition.x + "," + playerPosition.y + "," + playerPosition.z;
+        message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z;
 
         // Obtener IP del servidor desde JoinInformation si está configurada
         if (JoinInformation.client_Home != null && !string.IsNullOrEmpty(JoinInformation.client_Home.clientIP))
@@ -32,7 +32,7 @@ public class ClientUDP : MonoBehaviour
     {
         // Actualizar la posición del jugador y el mensaje
         playerPosition = transform.position;
-        message = "Position: " + playerPosition.x + "," + playerPosition.y + "," + playerPosition.z;
+        message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z;
     }
 
     void StartClient()
