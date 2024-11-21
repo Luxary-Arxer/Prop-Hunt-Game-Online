@@ -1,6 +1,8 @@
 # Prop Hunt Game
 Creación de prototipo de videojuego prop hunt online en la version  2022.3.33f1  en unity
 
+La IP es la Local IP -> 127.0.0.1
+
 Cada partida se compondrá por 2 equipos y un timer el cual ira
 descendiendo hasta 0.
 Uno de los equipos es el que se esconde “Hiders” y el otro es el que ha de buscar y
