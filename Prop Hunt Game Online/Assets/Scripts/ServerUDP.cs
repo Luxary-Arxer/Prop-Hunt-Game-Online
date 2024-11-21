@@ -49,7 +49,7 @@ public class ServerUDP : MonoBehaviour
         byte[] data = new byte[1024];
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         EndPoint remote = (EndPoint)sender;
-
+        Debug.Log("Mensaje running: " + running);
         try
         {
             while (running)
@@ -58,10 +58,10 @@ public class ServerUDP : MonoBehaviour
                 message = Encoding.ASCII.GetString(data, 0, recv);
                 Debug.Log("Mensaje recibido del cliente: " + message);
 
-                if (message.Contains("Position:"))
-                {
-                    UpdatePlayerCubePosition(message);
-                }
+                //if (message.Contains("Position:"))
+                //{
+                //    UpdatePlayerCubePosition(message);
+                //}
 
                 Send(remote);
             }
@@ -79,30 +79,30 @@ public class ServerUDP : MonoBehaviour
         x = float.Parse(positionData[0]);
         y = float.Parse(positionData[1]);
         z = float.Parse(positionData[2]);
-        newPosition = new Vector3(x, 2, z);
+        newPosition = new Vector3(x, y + 0.5f, z);
         playerCube.transform.position = newPosition;
         Debug.Log("Posición X " + newPosition.x);
         Debug.Log("Posición Z " + newPosition.z);
     }
-    void UpdatePlayerCubePosition(string message)
-    {
-        string[] positionData = message.Split(':')[1].Trim().Split('.');
+    //void UpdatePlayerCubePosition(string message)
+    //{
+    //    string[] positionData = message.Split(':')[1].Trim().Split('.');
 
-        if (positionData.Length == 3)
-        {
-            if (float.TryParse(positionData[0], out float x) &&
-                float.TryParse(positionData[1], out float y) &&
-                float.TryParse(positionData[2], out float z))
-            {
-                Vector3 newPosition = new Vector3(x, y, z);
-                if (playerCube != null)
-                {
-                    playerCube.transform.position = newPosition;
-                    Debug.Log("Posición del cubo actualizada: " + newPosition);
-                }
-            }
-        }
-    }
+    //    if (positionData.Length == 3)
+    //    {
+    //        if (float.TryParse(positionData[0], out float x) &&
+    //            float.TryParse(positionData[1], out float y) &&
+    //            float.TryParse(positionData[2], out float z))
+    //        {
+    //            Vector3 newPosition = new Vector3(x, y, z);
+    //            if (playerCube != null)
+    //            {
+    //                playerCube.transform.position = newPosition;
+    //                Debug.Log("Posición del cubo actualizada: " + newPosition);
+    //            }
+    //        }
+    //    }
+    //}
 
     void Send(EndPoint remote)
     {
