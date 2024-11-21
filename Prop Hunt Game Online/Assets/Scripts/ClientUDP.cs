@@ -3,10 +3,15 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 using System.Threading;
+using TMPro;
 
 public class ClientUDP : MonoBehaviour
 {
     Socket socket;
+    /*
+    public GameObject UItextObj;
+    TextMeshProUGUI UItext;
+    */
     public string IPServer;
     public string NamePlayer;
     public GameObject player; // El objeto que representa al jugador (su avatar o similar)
@@ -25,6 +30,7 @@ public class ClientUDP : MonoBehaviour
 
     void Update()
     {
+        //UItext.text = clientText;
         // Enviar la posición del jugador en cada frame
         SendPlayerPosition();
     }
@@ -35,6 +41,7 @@ public class ClientUDP : MonoBehaviour
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         byte[] data = Encoding.ASCII.GetBytes("Player name: " + NamePlayer);
         socket.SendTo(data, ipep);
+        //clientText = "Handshake sent to " + ipep.ToString();
         Thread receive = new Thread(Receive);
         receive.Start();
     }
