@@ -1,122 +1,112 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 using System.Threading;
-using TMPro;
 
 public class ServerUDP : MonoBehaviour
 {
     Socket socket;
+    public GameObject playerCube; // Objeto que se moverá según los datos del cliente
+    public GameObject serverObject; // Objeto controlado por el servidor
 
-    public GameObject UItextObj;
-    TextMeshProUGUI UItext;
-
-    // Cube to move based on player position
-    public GameObject playerCube;
-
-    private void Awake()
-    {
-        // Initialize the player name
-        string NamePlayer = "Server"; // Can be customized
-        read_Name(NamePlayer);
-        Debug.Log(NamePlayer);
-    }
+    private bool running = true;
 
     void Start()
     {
-        startServer();
+        StartServer();
     }
 
-    public void startServer()
+    void StartServer()
     {
-        Debug.Log("Starting UDP Server...");
+        Debug.Log("Iniciando servidor UDP...");
 
-        // UDP binding to receive data on port 9050
-        IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9050);
-        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        socket.Bind(ipep);
+        try
+        {
+            IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9050);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            socket.Bind(ipep);
 
-        Debug.Log("\nServer started on port 9050");
+            Debug.Log("Servidor iniciado en el puerto 9050");
 
-        // Thread to receive data
-        Thread newConnection = new Thread(Receive);
-        newConnection.Start();
+            Thread receiveThread = new Thread(Receive);
+            receiveThread.IsBackground = true;
+            receiveThread.Start();
+        }
+        catch (SocketException e)
+        {
+            Debug.LogError("Error al iniciar el servidor: " + e.Message);
+        }
     }
 
     void Receive()
     {
         byte[] data = new byte[1024];
-        Debug.Log("\nWaiting for new Client...");
-
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-        EndPoint Remote = (EndPoint)(sender);
+        EndPoint remote = (EndPoint)sender;
 
-        // Loop to continuously receive data
-        while (true)
+        try
         {
-            try
+            while (running)
             {
-                int recv = socket.ReceiveFrom(data, ref Remote);
+                int recv = socket.ReceiveFrom(data, ref remote);
                 string message = Encoding.ASCII.GetString(data, 0, recv);
+                Debug.Log("Mensaje recibido del cliente: " + message);
 
-                // Log when a message is received from a client
-                Debug.Log("Received message from " + Remote.ToString() + ": " + message);
-
-                // Check for position update message
                 if (message.Contains("Position:"))
                 {
-                    // Parse the position
-                    string[] positionData = message.Split(':')[1].Trim().Split(',');
-
-                    if (positionData.Length == 3)
-                    {
-                        // Parse position values from the message
-                        float x = float.Parse(positionData[0]);
-                        float y = float.Parse(positionData[1]);
-                        float z = float.Parse(positionData[2]);
-
-                        // Update the cube's position
-                        UpdateCubePosition(new Vector3(x, y, z));
-                    }
+                    UpdatePlayerCubePosition(message);
                 }
 
-                // Start a new thread to send a ping back to the client (or acknowledge)
-                Thread sendThread = new Thread(() => Send(Remote));
-                sendThread.Start();
+                Send(remote);
             }
-            catch (SocketException e)
+        }
+        catch (SocketException e)
+        {
+            Debug.LogError("Error al recibir datos: " + e.Message);
+        }
+    }
+
+    void UpdatePlayerCubePosition(string message)
+    {
+        string[] positionData = message.Split(':')[1].Trim().Split(',');
+
+        if (positionData.Length == 3)
+        {
+            if (float.TryParse(positionData[0], out float x) &&
+                float.TryParse(positionData[1], out float y) &&
+                float.TryParse(positionData[2], out float z))
             {
-                Debug.LogError("Error receiving data: " + e.Message);
+                Vector3 newPosition = new Vector3(x, y, z);
+                if (playerCube != null)
+                {
+                    playerCube.transform.position = newPosition;
+                    Debug.Log("Posición del cubo actualizada: " + newPosition);
+                }
             }
         }
     }
 
-    // Method to update the cube's position based on the received data
-    void UpdateCubePosition(Vector3 newPosition)
+    void Send(EndPoint remote)
     {
-        if (playerCube != null)
+        try
         {
-            playerCube.transform.position = newPosition;
-            Debug.Log("Cube position updated: " + newPosition);
+            byte[] data = Encoding.ASCII.GetBytes("Ping");
+            socket.SendTo(data, remote);
+            Debug.Log("Ping enviado al cliente");
         }
-        else
+        catch (SocketException e)
         {
-            Debug.LogError("Player Cube not assigned in the server!");
+            Debug.LogError("Error al enviar datos: " + e.Message);
         }
     }
 
-    void Send(EndPoint Remote)
+    private void OnDestroy()
     {
-        byte[] data = Encoding.ASCII.GetBytes("Ping");
-        socket.SendTo(data, Remote);
-        Debug.Log("Ping sent to " + Remote.ToString());
-    }
-
-    public void read_Name(string Name)
-    {
-        Debug.Log("Server name set to: " + Name);
+        running = false;
+        if (socket != null)
+        {
+            socket.Close();
+        }
     }
 }
