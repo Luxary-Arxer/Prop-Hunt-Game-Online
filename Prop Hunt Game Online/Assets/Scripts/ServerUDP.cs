@@ -64,10 +64,6 @@ public class ServerUDP : MonoBehaviour
 
                 if (message.Contains("Position:"))
                 {
-                    if (playerCube == false)
-                    {
-                        playerCube.SetActive(true);
-                    }
 
                     UpdatePositionQueue(message);
                 }
@@ -103,8 +99,14 @@ public class ServerUDP : MonoBehaviour
             //x = float.Parse(positionData[0]);
             //y = float.Parse(positionData[1]);
             //z = float.Parse(positionData[2]);
+
             newPosition = positionQueue.Dequeue();
+            if (playerCube.activeSelf == false && playerCube.transform.position != newPosition)
+            {
+                playerCube.SetActive(true);
+            }
             playerCube.transform.position = newPosition;
+
             Debug.Log("Posición X " + newPosition.x);
             Debug.Log("Posición Z " + newPosition.z);
          }
