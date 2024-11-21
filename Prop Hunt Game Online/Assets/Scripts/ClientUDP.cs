@@ -7,7 +7,7 @@ using System.Threading;
 public class ClientUDP : MonoBehaviour
 {
     Socket socket;
-    public string IPServer = "127.0.0.1"; // Dirección IP del servidor
+    public string IPServer; // Dirección IP del servidor
     Vector3 playerPosition; // Posición del jugador
     string message; // Mensaje a enviar
     bool running = true; // Bandera para manejar el bucle de envío
@@ -22,6 +22,10 @@ public class ClientUDP : MonoBehaviour
         if (JoinInformation.client_Home != null && !string.IsNullOrEmpty(JoinInformation.client_Home.clientIP))
         {
             IPServer = JoinInformation.client_Home.clientIP;
+        }
+        else
+        {
+            IPServer = "127.0.0.1";
         }
 
         // Iniciar el cliente
