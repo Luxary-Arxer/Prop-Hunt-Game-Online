@@ -16,6 +16,7 @@ public class ServerUDP : MonoBehaviour
     private Queue<Vector3> positionQueue = new Queue<Vector3>();
     private bool running = true;
     private Vector3 newPosition;
+    private Vector3 newRotation;
     private string message;
     private float x;
     private float y;
@@ -64,6 +65,7 @@ public class ServerUDP : MonoBehaviour
                 if (message.Contains("Position:"))
                 {
                     UpdatePositionQueue(message);
+                    UpdateRotation(message);
                 }
                 Send(remote);
             }
@@ -77,35 +79,59 @@ public class ServerUDP : MonoBehaviour
     void UpdatePositionQueue(string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split("|");
-        if (positionData.Length == 3)
+        if (positionData.Length == 6)
         {
             float x = float.Parse(positionData[0]);
             float y = float.Parse(positionData[1]);
             float z = float.Parse(positionData[2]);
             Vector3 newPosition = new Vector3(x, y + 0f, z);
 
+            /*
+            float x_rotation = float.Parse(positionData[3]);
+            float y_rotation = float.Parse(positionData[4]);
+            float z_rotation = float.Parse(positionData[5]);
+            Vector3 newRotation = new Vector3(x, y, z);
+            */
+
             // Agregar la nueva posición a la cola
             positionQueue.Enqueue(newPosition);
         }
     }
+    void UpdateRotation(string message)
+    {
+        string[] positionData = message.Split(':')[1].Trim().Split("|");
+        if (positionData.Length == 6)
+        {
+            
+            float x_rotation = float.Parse(positionData[3]);
+            float y_rotation = float.Parse(positionData[4]);
+            float z_rotation = float.Parse(positionData[5]);
+            Vector3 newRotation = new Vector3(x_rotation, y_rotation, z_rotation);
+            
+
+            // Agregar la nueva posición a la cola
+            positionQueue.Enqueue(newRotation);
+        }
+    }
+
     void Update()
     {
         if (positionQueue.Count > 0) 
         { 
-            //string[] positionData = message.Split(':')[1].Trim().Split("|");
-            //x = float.Parse(positionData[0]);
-            //y = float.Parse(positionData[1]);
-            //z = float.Parse(positionData[2]);
 
             newPosition = positionQueue.Dequeue();
+
+            newRotation = positionQueue.Dequeue();
+
             if (playerCube.activeSelf == false && playerCube.transform.position != newPosition)
             {          
                 playerCube.SetActive(true);
             }
             playerCube.transform.position = newPosition;
 
-            Debug.Log("Posición X " + newPosition.x);
-            Debug.Log("Posición Z " + newPosition.z);
+            playerCube.transform.eulerAngles = newRotation;
+
+            Debug.Log("Posición X " + newPosition.x + "Posición Z " + newPosition.z);
             //Crear una copia del player asset para tener mas de 1 cliente no funciona
             /*
             if (numPlayers == 1)
@@ -117,25 +143,6 @@ public class ServerUDP : MonoBehaviour
             */
         }
     }
-    //void UpdatePlayerCubePosition(string message)
-    //{
-    //    string[] positionData = message.Split(':')[1].Trim().Split('.');
-
-    //    if (positionData.Length == 3)
-    //    {
-    //        if (float.TryParse(positionData[0], out float x) &&
-    //            float.TryParse(positionData[1], out float y) &&
-    //            float.TryParse(positionData[2], out float z))
-    //        {
-    //            Vector3 newPosition = new Vector3(x, y, z);
-    //            if (playerCube != null)
-    //            {
-    //                playerCube.transform.position = newPosition;
-    //                Debug.Log("Posición del cubo actualizada: " + newPosition);
-    //            }
-    //        }
-    //    }
-    //}
 
     void Send(EndPoint remote)
     {

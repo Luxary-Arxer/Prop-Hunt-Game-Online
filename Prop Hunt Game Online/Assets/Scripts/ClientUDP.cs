@@ -9,6 +9,7 @@ public class ClientUDP : MonoBehaviour
     Socket socket;
     public string IPServer; // Dirección IP del servidor
     Vector3 playerPosition; // Posición del jugador
+    Vector3 playerRotation; // Rotación del jugador
     string message; // Mensaje a enviar
     bool running = true; // Bandera para manejar el bucle de envío
 
@@ -36,7 +37,9 @@ public class ClientUDP : MonoBehaviour
     {
         // Actualizar la posición del jugador y el mensaje
         playerPosition = transform.position;
-        message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z;
+        playerRotation = transform.eulerAngles;
+        message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
+            + "|" + playerRotation.x + "|" +  playerRotation.y + "|" + +playerRotation.z;
     }
 
     void StartClient()
