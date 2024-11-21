@@ -11,10 +11,15 @@ public class ServerUDP : MonoBehaviour
     public GameObject serverObject; // Objeto controlado por el servidor
 
     private bool running = true;
-
+    private Vector3 newPosition;
+    private string message;
+    float x;
+    float y;
+    float z;
     void Start()
     {
         StartServer();
+
     }
 
     void StartServer()
@@ -50,7 +55,7 @@ public class ServerUDP : MonoBehaviour
             while (running)
             {
                 int recv = socket.ReceiveFrom(data, ref remote);
-                string message = Encoding.ASCII.GetString(data, 0, recv);
+                message = Encoding.ASCII.GetString(data, 0, recv);
                 Debug.Log("Mensaje recibido del cliente: " + message);
 
                 if (message.Contains("Position:"))
@@ -67,6 +72,18 @@ public class ServerUDP : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        
+        string[] positionData = message.Split(':')[1].Trim().Split(',');
+        x = float.Parse(positionData[0]);
+        y = float.Parse(positionData[1]);
+        z = float.Parse(positionData[2]);
+        newPosition = new Vector3(x, 2, z);
+        playerCube.transform.position = newPosition;
+        Debug.Log("Posición X " + newPosition.x);
+
+    }
     void UpdatePlayerCubePosition(string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split(',');
