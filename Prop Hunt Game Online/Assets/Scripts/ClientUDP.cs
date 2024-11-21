@@ -59,7 +59,7 @@ public class ClientUDP : MonoBehaviour
                 Debug.Log("Datos enviados al servidor: " + message);
 
                 // Pausa para controlar la frecuencia de envío
-                Thread.Sleep(1000); // Enviar cada segundo
+                Thread.Sleep(16); // Enviar cada segundo
             }
         }
         catch (SocketException e)
