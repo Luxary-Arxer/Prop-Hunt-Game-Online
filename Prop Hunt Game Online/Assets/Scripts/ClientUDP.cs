@@ -10,7 +10,6 @@ public class ClientUDP : MonoBehaviour
     Socket socket;
 
     string clientText;
-
     public string IPServer;
     public string NamePlayer;
 
@@ -40,10 +39,6 @@ public class ClientUDP : MonoBehaviour
     void Update()
     {
         Send();
-
-        //UItext.text = clientText;
-        // Enviar la posición del jugador en cada frame
-        SendPlayerPosition();
     }
 
     void Send()
