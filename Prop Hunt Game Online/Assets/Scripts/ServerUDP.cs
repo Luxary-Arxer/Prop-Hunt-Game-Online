@@ -10,6 +10,8 @@ public class ServerUDP : MonoBehaviour
     Socket socket;
     public GameObject playerCube; // Objeto que se moverá según los datos del cliente
     public GameObject serverObject; // Objeto controlado por el servidor
+    public int numPlayers;
+
 
     private Queue<Vector3> positionQueue = new Queue<Vector3>();
     private bool running = true;
@@ -21,7 +23,6 @@ public class ServerUDP : MonoBehaviour
     void Start()
     {
         StartServer();
-
     }
 
     void StartServer()
@@ -60,14 +61,10 @@ public class ServerUDP : MonoBehaviour
                 message = Encoding.ASCII.GetString(data, 0, recv);
                 Debug.Log("Mensaje recibido del cliente: " + message);
 
-
-
                 if (message.Contains("Position:"))
                 {
-
                     UpdatePositionQueue(message);
                 }
-
                 Send(remote);
             }
         }
@@ -85,7 +82,7 @@ public class ServerUDP : MonoBehaviour
             float x = float.Parse(positionData[0]);
             float y = float.Parse(positionData[1]);
             float z = float.Parse(positionData[2]);
-            Vector3 newPosition = new Vector3(x, y + 0.5f, z);
+            Vector3 newPosition = new Vector3(x, y + 0f, z);
 
             // Agregar la nueva posición a la cola
             positionQueue.Enqueue(newPosition);
@@ -102,14 +99,23 @@ public class ServerUDP : MonoBehaviour
 
             newPosition = positionQueue.Dequeue();
             if (playerCube.activeSelf == false && playerCube.transform.position != newPosition)
-            {
+            {          
                 playerCube.SetActive(true);
             }
             playerCube.transform.position = newPosition;
 
             Debug.Log("Posición X " + newPosition.x);
             Debug.Log("Posición Z " + newPosition.z);
-         }
+            //Crear una copia del player asset para tener mas de 1 cliente no funciona
+            /*
+            if (numPlayers == 1)
+            {
+                GameObject playerClient = GameObject.Instantiate(playerCube);
+                playerClient.SetActive(true);
+                playerClient.transform.position = newPosition;
+            }
+            */
+        }
     }
     //void UpdatePlayerCubePosition(string message)
     //{
@@ -144,7 +150,6 @@ public class ServerUDP : MonoBehaviour
             Debug.LogError("Error al enviar datos: " + e.Message);
         }
     }
-
     private void OnDestroy()
     {
         running = false;
