@@ -15,15 +15,24 @@ public class ServerUDP : MonoBehaviour
 
     private Queue<Vector3> positionQueue = new Queue<Vector3>();
     private bool running = true;
-    private Vector3 newPosition;
-    private Vector3 newRotation;
+
+    private Vector3 newPosition_server;
+    private Vector3 newRotation_server;
+
+    Vector3 playerPosition; // Posición del jugador
+    Vector3 playerRotation; // Rotación del jugador
+
     private string message;
+    private string message_enviar;
     private float x;
     private float y;
     private float z;
     void Start()
     {
         StartServer();
+        // Inicializar posición y mensaje
+        playerPosition = transform.position;
+        message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z;
     }
 
     void StartServer()
@@ -117,21 +126,21 @@ public class ServerUDP : MonoBehaviour
     void Update()
     {
         if (positionQueue.Count > 0) 
-        { 
+        {
 
-            newPosition = positionQueue.Dequeue();
+            newPosition_server = positionQueue.Dequeue();
 
-            newRotation = positionQueue.Dequeue();
+            newRotation_server = positionQueue.Dequeue();
 
-            if (playerCube.activeSelf == false && playerCube.transform.position != newPosition)
+            if (playerCube.activeSelf == false && playerCube.transform.position != newPosition_server)
             {          
                 playerCube.SetActive(true);
             }
-            playerCube.transform.position = newPosition;
+            playerCube.transform.position = newPosition_server;
 
-            playerCube.transform.eulerAngles = newRotation;
+            playerCube.transform.eulerAngles = newRotation_server;
 
-            Debug.Log("Posición X " + newPosition.x + "Posición Z " + newPosition.z);
+            Debug.Log("Posición X " + newPosition_server.x + "Posición Z " + newPosition_server.z);
             //Crear una copia del player asset para tener mas de 1 cliente no funciona
             /*
             if (numPlayers == 1)
@@ -142,15 +151,21 @@ public class ServerUDP : MonoBehaviour
             }
             */
         }
+        //Enviar la posicion del player
+        playerPosition = transform.position;
+        playerRotation = transform.eulerAngles;
+        message_enviar = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
+        + "|" + playerRotation.x + "|" + playerRotation.y + "|" + +playerRotation.z;
     }
 
     void Send(EndPoint remote)
     {
         try
         {
-            byte[] data = Encoding.ASCII.GetBytes("Ping");
+            byte[] data = Encoding.ASCII.GetBytes(message_enviar);
             socket.SendTo(data, remote);
-            Debug.Log("Ping enviado al cliente");
+            Debug.Log("Datos enviados al cliente: " + message_enviar);
+
         }
         catch (SocketException e)
         {
