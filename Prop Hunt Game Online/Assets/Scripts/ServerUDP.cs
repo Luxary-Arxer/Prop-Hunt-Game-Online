@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 using System.Threading;
+using System.Collections.Generic;
 
 public class ServerUDP : MonoBehaviour
 {
@@ -10,12 +11,13 @@ public class ServerUDP : MonoBehaviour
     public GameObject playerCube; // Objeto que se moverá según los datos del cliente
     public GameObject serverObject; // Objeto controlado por el servidor
 
+    private Queue<Vector3> positionQueue = new Queue<Vector3>();
     private bool running = true;
     private Vector3 newPosition;
     private string message;
-    float x;
-    float y;
-    float z;
+    private float x;
+    private float y;
+    private float z;
     void Start()
     {
         StartServer();
@@ -58,10 +60,10 @@ public class ServerUDP : MonoBehaviour
                 message = Encoding.ASCII.GetString(data, 0, recv);
                 Debug.Log("Mensaje recibido del cliente: " + message);
 
-                //if (message.Contains("Position:"))
-                //{
-                //    UpdatePlayerCubePosition(message);
-                //}
+                if (message.Contains("Position:"))
+                {
+                    UpdatePositionQueue(message);
+                }
 
                 Send(remote);
             }
@@ -72,17 +74,33 @@ public class ServerUDP : MonoBehaviour
         }
     }
 
+    void UpdatePositionQueue(string message)
+    {
+        string[] positionData = message.Split(':')[1].Trim().Split("|");
+        if (positionData.Length == 3)
+        {
+            float x = float.Parse(positionData[0]);
+            float y = float.Parse(positionData[1]);
+            float z = float.Parse(positionData[2]);
+            Vector3 newPosition = new Vector3(x, y + 0.5f, z);
+
+            // Agregar la nueva posición a la cola
+            positionQueue.Enqueue(newPosition);
+        }
+    }
     void Update()
     {
-        
-        string[] positionData = message.Split(':')[1].Trim().Split("|");
-        x = float.Parse(positionData[0]);
-        y = float.Parse(positionData[1]);
-        z = float.Parse(positionData[2]);
-        newPosition = new Vector3(x, y + 0.5f, z);
-        playerCube.transform.position = newPosition;
-        Debug.Log("Posición X " + newPosition.x);
-        Debug.Log("Posición Z " + newPosition.z);
+        if (positionQueue.Count > 0) 
+        { 
+            //string[] positionData = message.Split(':')[1].Trim().Split("|");
+            //x = float.Parse(positionData[0]);
+            //y = float.Parse(positionData[1]);
+            //z = float.Parse(positionData[2]);
+            newPosition = positionQueue.Dequeue();
+            playerCube.transform.position = newPosition;
+            Debug.Log("Posición X " + newPosition.x);
+            Debug.Log("Posición Z " + newPosition.z);
+         }
     }
     //void UpdatePlayerCubePosition(string message)
     //{
