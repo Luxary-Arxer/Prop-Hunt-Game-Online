@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 using System.Threading;
+using System.Collections.Generic;
 
 public class ClientUDP : MonoBehaviour
 {
@@ -12,6 +13,11 @@ public class ClientUDP : MonoBehaviour
     Vector3 playerRotation; // Rotación del jugador
     string message; // Mensaje a enviar
     bool running = true; // Bandera para manejar el bucle de envío
+    public GameObject serverObject;
+    private Queue<Vector3> positionQueue = new Queue<Vector3>();
+    private Vector3 newPosition_server;
+    private Vector3 newRotation_server;
+
 
     void Start()
     {
@@ -35,11 +41,26 @@ public class ClientUDP : MonoBehaviour
 
     void Update()
     {
+        if (positionQueue.Count > 0)
+        {
+            newPosition_server = positionQueue.Dequeue();
+
+            newRotation_server = positionQueue.Dequeue();
+
+            if (serverObject.activeSelf == false && serverObject.transform.position != newPosition_server)
+            {
+                serverObject.SetActive(true);
+            }
+            serverObject.transform.position = newPosition_server;
+
+            serverObject.transform.eulerAngles = newRotation_server;
+        }
         // Actualizar la posición del jugador y el mensaje
         playerPosition = transform.position;
         playerRotation = transform.eulerAngles;
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
             + "|" + playerRotation.x + "|" +  playerRotation.y + "|" + +playerRotation.z;
+        Debug.Log("Posición X " + newPosition_server.x + "Posición Z " + newPosition_server.z);
     }
 
     void StartClient()
@@ -74,6 +95,73 @@ public class ClientUDP : MonoBehaviour
             Debug.LogError("Error en el cliente: " + e.Message);
         }
     }
+
+    void Receive()
+    {
+        byte[] data = new byte[1024];
+        IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+        EndPoint remote = (EndPoint)sender;
+        Debug.Log("Mensaje running: " + running);
+        try
+        {
+            while (running)
+            {
+                int recv = socket.ReceiveFrom(data, ref remote);
+                message = Encoding.ASCII.GetString(data, 0, recv);
+                Debug.Log("Mensaje recibido del cliente: " + message);
+
+                if (message.Contains("Position:"))
+                {
+                    UpdatePositionQueue(message);
+                    UpdateRotation(message);
+                }
+                Send();
+            }
+        }
+        catch (SocketException e)
+        {
+            Debug.LogError("Error al recibir datos: " + e.Message);
+        }
+    }
+
+    void UpdatePositionQueue(string message)
+    {
+        string[] positionData = message.Split(':')[1].Trim().Split("|");
+        if (positionData.Length == 6)
+        {
+            float x = float.Parse(positionData[0]);
+            float y = float.Parse(positionData[1]);
+            float z = float.Parse(positionData[2]);
+            Vector3 newPosition = new Vector3(x, y + 0f, z);
+
+            /*
+            float x_rotation = float.Parse(positionData[3]);
+            float y_rotation = float.Parse(positionData[4]);
+            float z_rotation = float.Parse(positionData[5]);
+            Vector3 newRotation = new Vector3(x, y, z);
+            */
+
+            // Agregar la nueva posición a la cola
+            positionQueue.Enqueue(newPosition);
+        }
+    }
+    void UpdateRotation(string message)
+    {
+        string[] positionData = message.Split(':')[1].Trim().Split("|");
+        if (positionData.Length == 6)
+        {
+
+            float x_rotation = float.Parse(positionData[3]);
+            float y_rotation = float.Parse(positionData[4]);
+            float z_rotation = float.Parse(positionData[5]);
+            Vector3 newRotation = new Vector3(x_rotation, y_rotation, z_rotation);
+
+
+            // Agregar la nueva posición a la cola
+            positionQueue.Enqueue(newRotation);
+        }
+    }
+
 
     private void OnDestroy()
     {
