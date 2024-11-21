@@ -10,11 +10,21 @@ public class ClientUDP : MonoBehaviour
     Socket socket;
     public string IPServer;
     private bool connected = false;
+    Vector3 playerPosition;
+    string message;
 
     void Start()
     {
+        playerPosition = transform.position;
+        message = "Position: " + playerPosition.x + "," + playerPosition.y + "," + playerPosition.z;
         IPServer = JoinInformation.client_Home.clientIP;
         StartClient();
+    }
+
+    private void Update()
+    {
+        playerPosition = transform.position;
+        message = "Position: " + playerPosition.x + "," + playerPosition.y + "," + playerPosition.z;
     }
 
     public void StartClient()
@@ -30,11 +40,8 @@ public class ClientUDP : MonoBehaviour
 
         while (true)
         {
-            // Get the player position
-            Vector3 playerPosition = transform.position;
-
             // Send position data
-            string message = "Position: " + playerPosition.x + "," + playerPosition.y + "," + playerPosition.z;
+
             byte[] data = Encoding.ASCII.GetBytes(message);
             socket.SendTo(data, ipep);
             Debug.Log("Position sent: " + message);
