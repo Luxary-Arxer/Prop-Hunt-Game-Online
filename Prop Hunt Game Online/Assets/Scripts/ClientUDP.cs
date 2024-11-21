@@ -18,7 +18,6 @@ public class ClientUDP : MonoBehaviour
     private Vector3 newPosition_server;
     private Vector3 newRotation_server;
 
-
     void Start()
     {
         // Inicializar posición y mensaje
@@ -44,23 +43,23 @@ public class ClientUDP : MonoBehaviour
         if (positionQueue.Count > 0)
         {
             newPosition_server = positionQueue.Dequeue();
-
             newRotation_server = positionQueue.Dequeue();
 
             if (serverObject.activeSelf == false && serverObject.transform.position != newPosition_server)
             {
                 serverObject.SetActive(true);
             }
-            serverObject.transform.position = newPosition_server;
 
+            serverObject.transform.position = newPosition_server;
             serverObject.transform.eulerAngles = newRotation_server;
         }
+
         // Actualizar la posición del jugador y el mensaje
         playerPosition = transform.position;
         playerRotation = transform.eulerAngles;
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
-            + "|" + playerRotation.x + "|" +  playerRotation.y + "|" + +playerRotation.z;
-        Debug.Log("Posición X " + newPosition_server.x + "Posición Z " + newPosition_server.z);
+            + "|" + playerRotation.x + "|" + playerRotation.y + "|" + playerRotation.z;
+        Debug.Log("Posición X " + newPosition_server.x + " Posición Z " + newPosition_server.z);
     }
 
     void StartClient()
@@ -69,6 +68,11 @@ public class ClientUDP : MonoBehaviour
         Thread sendThread = new Thread(Send);
         sendThread.IsBackground = true; // Permitir que el hilo termine automáticamente al cerrar la aplicación
         sendThread.Start();
+
+        // Crear y empezar un nuevo hilo para recibir datos
+        Thread receiveThread = new Thread(Receive);
+        receiveThread.IsBackground = true;
+        receiveThread.Start();
     }
 
     void Send()
@@ -101,21 +105,23 @@ public class ClientUDP : MonoBehaviour
         byte[] data = new byte[1024];
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         EndPoint remote = (EndPoint)sender;
-        Debug.Log("Mensaje running: " + running);
+        Debug.Log("Esperando mensajes...");
+
         try
         {
             while (running)
             {
                 int recv = socket.ReceiveFrom(data, ref remote);
-                message = Encoding.ASCII.GetString(data, 0, recv);
-                Debug.Log("Mensaje recibido del cliente: " + message);
+                string receivedMessage = Encoding.ASCII.GetString(data, 0, recv);
+                Debug.Log("Mensaje recibido del servidor: " + receivedMessage);
 
-                if (message.Contains("Position:"))
+                if (receivedMessage.Contains("Position:"))
                 {
-                    UpdatePositionQueue(message);
-                    UpdateRotation(message);
+                    UpdatePositionQueue(receivedMessage);
+                    UpdateRotation(receivedMessage);
                 }
-                Send();
+                // Pausar para no sobrecargar la CPU
+                Thread.Sleep(10);
             }
         }
         catch (SocketException e)
@@ -132,36 +138,27 @@ public class ClientUDP : MonoBehaviour
             float x = float.Parse(positionData[0]);
             float y = float.Parse(positionData[1]);
             float z = float.Parse(positionData[2]);
-            Vector3 newPosition = new Vector3(x, y + 0f, z);
-
-            /*
-            float x_rotation = float.Parse(positionData[3]);
-            float y_rotation = float.Parse(positionData[4]);
-            float z_rotation = float.Parse(positionData[5]);
-            Vector3 newRotation = new Vector3(x, y, z);
-            */
+            Vector3 newPosition = new Vector3(x, y, z);
 
             // Agregar la nueva posición a la cola
             positionQueue.Enqueue(newPosition);
         }
     }
+
     void UpdateRotation(string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split("|");
         if (positionData.Length == 6)
         {
-
             float x_rotation = float.Parse(positionData[3]);
             float y_rotation = float.Parse(positionData[4]);
             float z_rotation = float.Parse(positionData[5]);
             Vector3 newRotation = new Vector3(x_rotation, y_rotation, z_rotation);
 
-
-            // Agregar la nueva posición a la cola
+            // Agregar la nueva rotación a la cola
             positionQueue.Enqueue(newRotation);
         }
     }
-
 
     private void OnDestroy()
     {
