@@ -60,8 +60,15 @@ public class ServerUDP : MonoBehaviour
                 message = Encoding.ASCII.GetString(data, 0, recv);
                 Debug.Log("Mensaje recibido del cliente: " + message);
 
+
+
                 if (message.Contains("Position:"))
                 {
+                    if (playerCube == false)
+                    {
+                        playerCube.SetActive(true);
+                    }
+
                     UpdatePositionQueue(message);
                 }
 
