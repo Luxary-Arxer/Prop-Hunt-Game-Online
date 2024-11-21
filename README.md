@@ -12,7 +12,7 @@ tiempo después de los Hiders además de que si no logran atrapar a todos los Hi
 antes de que se acabe el tiempo estos perderán.
 
 Enlace a Github: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online
-Enlace a Github Release: 
+Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/releases
 
 
 - Build (.exe)
