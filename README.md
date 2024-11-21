@@ -12,6 +12,7 @@ tiempo después de los Hiders además de que si no logran atrapar a todos los Hi
 antes de que se acabe el tiempo estos perderán.
 
 Enlace a Github: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online
+Enlace a Github Release: 
 
 - Enlace a GitHub: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online
 - Build (.exe)
@@ -27,13 +28,16 @@ Enric Arxer:
 • uso de información del cliente para rotar objeto,
 • generar jugador en el servidor cuando se realiza la conexión.
 Guillem Aixut:
-• Enviar datos del cliente al servidor,
+• Enviar datos del cliente y recibir-los al servidor.
 
-- Instrucciones claras, en caso de que sean necesarias
+# Instrucciones
+ 
+Escena principal: Home
 
-- Escena principal: Inicio
+Ejecutar el programa dos veces
 
-- Listado de dificultades, comentarios, errores conocidos u otras consideraciones relevantes
+
+# Dificultades, comentarios o errores
 
 - Recuerda: un error reportado causa menos pérdida de calificación que un error no reportado
 
