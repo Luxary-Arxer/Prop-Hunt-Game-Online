@@ -24,6 +24,7 @@ Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/r
 ### Nixon Correa:
 
 • Uso de información del cliente y servidor para mover objetos.
+
 • Añadido en una cola y optimización en el envío de paquetes.
 
 • Enviar datos del servidor y recibir-los al cliente.
