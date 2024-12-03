@@ -7,12 +7,12 @@ using System.Collections.Generic;
 
 public class ClientUDP : MonoBehaviour
 {
-    Socket socket;
+    private Socket socket;
     public string IPServer; // Dirección IP del servidor
-    Vector3 playerPosition; // Posición del jugador
-    Vector3 playerRotation; // Rotación del jugador
-    string message; // Mensaje a enviar
-    bool running = true; // Bandera para manejar el bucle de envío
+    private Vector3 playerPosition; // Posición del jugador
+    private Vector3 playerRotation; // Rotación del jugador
+    private string message; // Mensaje a enviar
+    private bool running = true; // Bandera para manejar el bucle de envío
     public GameObject serverObject;
     private Queue<Vector3> positionQueue = new Queue<Vector3>();
     private Vector3 newPosition_server;
@@ -35,7 +35,8 @@ public class ClientUDP : MonoBehaviour
         }
 
         // Iniciar el cliente
-        StartClient();
+        InitializeSocket(); // Inicializamos el socket antes de usarlo
+        StartClient(); // Iniciar el cliente para recibir y enviar datos
     }
 
     void Update()
@@ -45,7 +46,7 @@ public class ClientUDP : MonoBehaviour
             newPosition_server = positionQueue.Dequeue();
             newRotation_server = positionQueue.Dequeue();
 
-            if (serverObject.activeSelf == false && serverObject.transform.position != newPosition_server)
+            if (!serverObject.activeSelf && serverObject.transform.position != newPosition_server)
             {
                 serverObject.SetActive(true);
             }
@@ -60,6 +61,22 @@ public class ClientUDP : MonoBehaviour
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
             + "|" + playerRotation.x + "|" + playerRotation.y + "|" + playerRotation.z;
         Debug.Log("Posición X " + newPosition_server.x + " Posición Z " + newPosition_server.z);
+    }
+
+    void InitializeSocket()
+    {
+        try
+        {
+            // Configuración del endpoint del servidor
+            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse(IPServer), 9050);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            socket.Connect(ipep); // Asegurarse de que el socket se conecta al servidor
+            Debug.Log("Socket inicializado correctamente.");
+        }
+        catch (SocketException e)
+        {
+            Debug.LogError("Error al inicializar el socket: " + e.Message);
+        }
     }
 
     void StartClient()
@@ -79,9 +96,15 @@ public class ClientUDP : MonoBehaviour
     {
         try
         {
-            // Configuración del endpoint del servidor
+            // Verifica que el socket está inicializado antes de enviar
+            if (socket == null)
+            {
+                Debug.LogError("El socket no está inicializado correctamente.");
+                return;
+            }
+
+            // Configuración del endpoint del servidor (ya se inicializa en InitializeSocket)
             IPEndPoint ipep = new IPEndPoint(IPAddress.Parse(IPServer), 9050);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
             while (running)
             {
@@ -90,8 +113,8 @@ public class ClientUDP : MonoBehaviour
                 socket.SendTo(data, ipep);
                 Debug.Log("Datos enviados al servidor: " + message);
 
-                // Pausa para controlar la frecuencia de envío
-                Thread.Sleep(16); // Enviar cada segundo
+                
+                Thread.Sleep(16); // 60FPS
             }
         }
         catch (SocketException e)
@@ -102,6 +125,12 @@ public class ClientUDP : MonoBehaviour
 
     void Receive()
     {
+        if (socket == null)
+        {
+            Debug.LogError("El socket no está inicializado correctamente.");
+            return;
+        }
+
         byte[] data = new byte[1024];
         IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
         EndPoint remote = (EndPoint)sender;
@@ -120,6 +149,7 @@ public class ClientUDP : MonoBehaviour
                     UpdatePositionQueue(receivedMessage);
                     UpdateRotation(receivedMessage);
                 }
+
                 // Pausar para no sobrecargar la CPU
                 Thread.Sleep(10);
             }
