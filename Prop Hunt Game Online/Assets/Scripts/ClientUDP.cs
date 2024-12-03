@@ -8,9 +8,9 @@ using System.Collections.Generic;
 public class ClientUDP : MonoBehaviour
 {
     private Socket socket;
-    public string IPServer; // Dirección IP del servidor
-    private Vector3 playerPosition; // Posición del jugador
-    private Vector3 playerRotation; // Rotación del jugador
+    public string IPServer; 
+    private Vector3 playerPosition; 
+    private Vector3 playerRotation; 
     private string message; // Mensaje a enviar
     private bool running = true; // Bandera para manejar el bucle de envío
     public GameObject serverObject;
@@ -81,12 +81,12 @@ public class ClientUDP : MonoBehaviour
 
     void StartClient()
     {
-        // Crear y empezar un nuevo hilo para enviar datos
+        // Crear y empezar un nuevo thread para enviar datos
         Thread sendThread = new Thread(Send);
-        sendThread.IsBackground = true; // Permitir que el hilo termine automáticamente al cerrar la aplicación
+        sendThread.IsBackground = true; // Permitir que el thread termine automáticamente al cerrar la aplicación
         sendThread.Start();
 
-        // Crear y empezar un nuevo hilo para recibir datos
+        // Crear un nuevo thread para recibir datos
         Thread receiveThread = new Thread(Receive);
         receiveThread.IsBackground = true;
         receiveThread.Start();
@@ -96,7 +96,7 @@ public class ClientUDP : MonoBehaviour
     {
         try
         {
-            // Verifica que el socket está inicializado antes de enviar
+            // Verifica que el socket está inicializado
             if (socket == null)
             {
                 Debug.LogError("El socket no está inicializado correctamente.");
@@ -150,8 +150,7 @@ public class ClientUDP : MonoBehaviour
                     UpdateRotation(receivedMessage);
                 }
 
-                // Pausar para no sobrecargar la CPU
-                Thread.Sleep(10);
+                Thread.Sleep(16); //60FPS
             }
         }
         catch (SocketException e)
