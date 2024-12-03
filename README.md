@@ -20,7 +20,7 @@ Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/r
 - Vídeo con demo explicando lo que se está entregando
 - Paquete Unity
 
-# Contrivucuies de cada miembro
+# Contribuciones de cada miembro
 
 ### Nixon Correa:
 
@@ -52,7 +52,7 @@ Habre dos instancias del juego, en la que quieras que sea el sevrer clica su bot
 
 # Dificultades, comentarios o errores
 
-- Recuerda: un error reportado causa menos pérdida de calificación que un error no reportado
+- Puede dar error si es con dos builds, la solución es tener una instancia abierta en el unity
 
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
