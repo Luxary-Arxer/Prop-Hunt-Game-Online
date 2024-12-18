@@ -6,9 +6,10 @@ public class PlayerTransformation : MonoBehaviour
     [SerializeField] private GameObject currentModel; // El modelo actual del jugador
     [SerializeField] private float transformDistance = 5f; // Distancia máxima para transformarse
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
-
+    public bool hunter = false;
     void Update()
     {
+
         // Dibujar un rayo desde el centro de la cámara
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         RaycastHit hit;
@@ -19,7 +20,7 @@ public class PlayerTransformation : MonoBehaviour
             Debug.Log("Apuntando a un objeto transformable: " + hit.collider.name);
 
             // Si presionamos 'E' nos transformamos en el objeto
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E) && hunter == false)
             {
                 TransformIntoObject(hit.collider.gameObject);
             }
