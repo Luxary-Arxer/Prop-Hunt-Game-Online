@@ -6,7 +6,7 @@ public class PlayerToProp : MonoBehaviour
     [SerializeField] private GameObject currentModel; // El modelo actual del jugador
     [SerializeField] private float transformDistance = 5f; // Distancia máxima para transformarse
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
-    public bool hunter = false;
+    [SerializeField] public bool Hunter = false;
     public GameObject CaraterMesh;
     public GameObject Gun;
 
@@ -32,17 +32,17 @@ public class PlayerToProp : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            hunter = !hunter;
+            Hunter = !Hunter;
         }
         PlayerTeam();
 
-        if (hunter == true){
+        if (Hunter == true){
             CaraterMesh.layer = 6;
             CaraterMesh.SetActive(true);
             currentModel.SetActive(false);
         }
         // Para saver que tipo de player es
-        if (hunter == false)
+        if (Hunter == false)
         {
 
             CaraterMesh.layer = 7;
@@ -65,6 +65,28 @@ public class PlayerToProp : MonoBehaviour
                 currentModel.SetActive(false);
 
                 TransformPlayer();
+            }
+        }
+
+        //Funcionalidad de las difrenetes consolas
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            float interact_Range = 2f;
+            Collider[] collider_array = Physics.OverlapSphere(transform.position, interact_Range);
+            foreach (Collider collider in collider_array)
+            {
+                if (collider.TryGetComponent(out ConsoletoHunter Console_Hunter))
+                {
+
+                    Console_Hunter.Interact();
+                    Hunter = true;
+                }
+                if (collider.TryGetComponent(out ConsoletoAlien Console_Alien))
+                {
+                    Console_Alien.Interact();
+                    Hunter = false;
+                }
+                //Debug.Log(collider);
             }
         }
 
@@ -124,7 +146,7 @@ public class PlayerToProp : MonoBehaviour
     //Mira la variable y canvia que pude hacer el player
     void PlayerTeam()
     {
-        if (hunter == false)
+        if (Hunter == false)
         {
             Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
             materials[0] = Material_Alien;
