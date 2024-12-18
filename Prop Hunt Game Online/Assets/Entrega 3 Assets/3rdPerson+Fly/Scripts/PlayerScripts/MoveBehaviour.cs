@@ -18,6 +18,13 @@ public class MoveBehaviour : GenericBehaviour
 	private int groundedBool;                       // Animator variable related to whether or not the player is on ground.
 	private bool jump;                              // Boolean to determine whether or not the player started a jump.
 	private bool isColliding;                       // Boolean to determine if the player has collided with an obstacle.
+//25012001
+	private Collider playerCollider; // Almacena el colisionador del jugador.
+//25012001
+	void Awake()
+	{
+		playerCollider = GetComponent<Collider>(); // Guardamos el colisionador original.
+	}
 
 	// Start is always called after any Awake functions.
 	void Start()
@@ -40,6 +47,27 @@ public class MoveBehaviour : GenericBehaviour
 		if (!jump && Input.GetButtonDown(jumpButton) && behaviourManager.IsCurrentBehaviour(this.behaviourCode) && !behaviourManager.IsOverriding())
 		{
 			jump = true;
+		}
+//25012001
+		if (Input.GetKeyDown(KeyCode.E))
+		{
+			TransformPlayer(); // Llamar al método para transformarse.
+		}
+	}
+//25012001
+	void TransformPlayer()
+	{
+		Collider targetCollider = GameObject.FindWithTag("TransformTarget").GetComponent<Collider>();
+
+		if (targetCollider != null)
+		{
+			// Desactiva el colisionador del jugador actual.
+			playerCollider.enabled = false;
+
+			// Activa el colisionador del objeto al que se transformó.
+			targetCollider.enabled = true;
+
+			// Realiza cualquier otra modificación necesaria en el controlador del jugador.
 		}
 	}
 
