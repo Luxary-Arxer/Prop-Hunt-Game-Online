@@ -16,16 +16,9 @@ public class PlayerTransformation : MonoBehaviour
         RaycastHit hit;
 
 
-
-        if (hunter == true){
-            CaraterMesh.layer = 6;
-            CaraterMesh.SetActive(true);
-            currentModel.SetActive(false);
-        }
         // Para saver que tipo de player es
         if (hunter == false)
         {
-            CaraterMesh.layer = 7;
             // Verificar si el rayo impacta con un objeto en la capa transformable
             if (Physics.Raycast(ray, out hit, transformDistance, transformLayer))
             {
