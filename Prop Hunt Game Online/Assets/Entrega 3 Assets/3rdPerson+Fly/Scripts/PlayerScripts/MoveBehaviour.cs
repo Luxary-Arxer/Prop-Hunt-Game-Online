@@ -11,7 +11,7 @@ public class MoveBehaviour : GenericBehaviour
 	public string jumpButton = "Jump";              // Default jump button.
 	public float jumpHeight = 1.5f;                 // Default jump height.
 	public float jumpInertialForce = 10f;          // Default horizontal inertial force when jumping.
-	public CapsuleCollider Colider;
+	public Collider Colider;
 
 	private float speed, speedSeeker;               // Moving speed.
 	private int jumpBool;                           // Animator variable related to jumping.
