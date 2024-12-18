@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class ConsoletoAlien : MonoBehaviour
 {
+
+    public GameObject Letras;
+    /*
+    Letras.SetActive(false);
+    Letras.SetActive(true);
+
+    */
     // Start is called before the first frame update
     void Start()
     {
