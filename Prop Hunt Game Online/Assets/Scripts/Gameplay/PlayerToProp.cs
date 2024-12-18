@@ -54,16 +54,14 @@ public class PlayerTransformation : MonoBehaviour
         // Destruir el modelo actual
         if (currentModel != null)
         {
-
             CaraterMesh.SetActive(false);
             Destroy(currentModel);
             Debug.Log("Modelo actual destruido.");
         }
 
-
-
         // Crear un nuevo modelo basado en el objetivo
         GameObject newModel = Instantiate(targetObject, modelParent);
+        newModel.layer = 7;
         newModel.transform.localPosition = new Vector3(0f,0.6f,-0.5f);
         newModel.transform.localRotation = Quaternion.identity;
 
