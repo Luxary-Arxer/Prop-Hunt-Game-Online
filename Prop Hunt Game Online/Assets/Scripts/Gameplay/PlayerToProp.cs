@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerTransformation : MonoBehaviour
+public class PlayerToProp : MonoBehaviour
 {
     [SerializeField] private Transform modelParent; // El contenedor de modelos
     [SerializeField] private GameObject currentModel; // El modelo actual del jugador
