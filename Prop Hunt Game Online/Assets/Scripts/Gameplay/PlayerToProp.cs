@@ -7,6 +7,7 @@ public class PlayerTransformation : MonoBehaviour
     [SerializeField] private float transformDistance = 5f; // Distancia máxima para transformarse
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
     public bool hunter = false;
+    public GameObject CaraterMesh;
     void Update()
     {
 
@@ -14,17 +15,30 @@ public class PlayerTransformation : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         RaycastHit hit;
 
-        // Verificar si el rayo impacta con un objeto en la capa transformable
-        if (Physics.Raycast(ray, out hit, transformDistance, transformLayer))
-        {
-            Debug.Log("Apuntando a un objeto transformable: " + hit.collider.name);
 
-            // Si presionamos 'E' nos transformamos en el objeto
-            if (Input.GetKeyDown(KeyCode.E) && hunter == false)
+        // Para saver que tipo de player es
+        if (hunter == false)
+        {
+            // Verificar si el rayo impacta con un objeto en la capa transformable
+            if (Physics.Raycast(ray, out hit, transformDistance, transformLayer))
             {
-                TransformIntoObject(hit.collider.gameObject);
+                Debug.Log("Apuntando a un objeto transformable: " + hit.collider.name);
+
+
+                // Si presionamos 'F' nos transformamos en el objeto
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    TransformIntoObject(hit.collider.gameObject);
+                }
+            }
+            // Si presionamos 'R' resetea el mash al inical
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                CaraterMesh.SetActive(true);
+                currentModel.SetActive(false);
             }
         }
+
     }
 
     private void TransformIntoObject(GameObject targetObject)
@@ -40,13 +54,17 @@ public class PlayerTransformation : MonoBehaviour
         // Destruir el modelo actual
         if (currentModel != null)
         {
+
+            CaraterMesh.SetActive(false);
             Destroy(currentModel);
             Debug.Log("Modelo actual destruido.");
         }
 
+
+
         // Crear un nuevo modelo basado en el objetivo
         GameObject newModel = Instantiate(targetObject, modelParent);
-        newModel.transform.localPosition = Vector3.zero;
+        newModel.transform.localPosition = new Vector3(0f,0.6f,-0.5f);
         newModel.transform.localRotation = Quaternion.identity;
 
         // Actualizar la referencia del modelo actual
