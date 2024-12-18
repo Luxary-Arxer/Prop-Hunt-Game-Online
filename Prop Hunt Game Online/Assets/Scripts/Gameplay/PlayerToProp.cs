@@ -12,6 +12,16 @@ public class PlayerToProp : MonoBehaviour
     public GameObject transformTarget; // Referencia al objeto en el que te transformas.
     private Collider originalCollider;  // Colisionador original del jugador.
 
+
+    public SkinnedMeshRenderer Player_Renderer;
+    public Material Material_Hunter, Material_Alien;
+
+    private void Start()
+    {
+
+
+    }
+
     void Update()
     {
 
@@ -19,7 +29,25 @@ public class PlayerToProp : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         RaycastHit hit;
 
+        if (Input.GetKeyDown(KeyCode.T))
+        {
 
+
+            if (hunter == true)
+            {
+                Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
+                materials[0] = Material_Alien;
+                Player_Renderer.sharedMaterials = materials;
+                hunter = false;
+            }
+            else
+            {
+                Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
+                materials[0] = Material_Hunter;
+                Player_Renderer.sharedMaterials = materials;
+                hunter = true;
+            }
+        }
 
         if (hunter == true){
             CaraterMesh.layer = 6;
@@ -29,6 +57,7 @@ public class PlayerToProp : MonoBehaviour
         // Para saver que tipo de player es
         if (hunter == false)
         {
+
             CaraterMesh.layer = 7;
             // Verificar si el rayo impacta con un objeto en la capa transformable
             if (Physics.Raycast(ray, out hit, transformDistance, transformLayer))
