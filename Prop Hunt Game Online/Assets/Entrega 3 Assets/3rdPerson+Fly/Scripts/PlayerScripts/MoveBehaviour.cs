@@ -11,6 +11,7 @@ public class MoveBehaviour : GenericBehaviour
 	public string jumpButton = "Jump";              // Default jump button.
 	public float jumpHeight = 1.5f;                 // Default jump height.
 	public float jumpInertialForce = 10f;          // Default horizontal inertial force when jumping.
+	public Collider Colider;
 
 	private float speed, speedSeeker;               // Moving speed.
 	private int jumpBool;                           // Animator variable related to jumping.
@@ -65,8 +66,8 @@ public class MoveBehaviour : GenericBehaviour
 			if (behaviourManager.GetAnim.GetFloat(speedFloat) > 0.1)
 			{
 				// Temporarily change player friction to pass through obstacles.
-				GetComponent<CapsuleCollider>().material.dynamicFriction = 0f;
-				GetComponent<CapsuleCollider>().material.staticFriction = 0f;
+				Colider.material.dynamicFriction = 0f;
+				Colider.material.staticFriction = 0f;
 				// Remove vertical velocity to avoid "super jumps" on slope ends.
 				RemoveVerticalVelocity();
 				// Set jump vertical impulse velocity.
@@ -88,8 +89,8 @@ public class MoveBehaviour : GenericBehaviour
 			{
 				behaviourManager.GetAnim.SetBool(groundedBool, true);
 				// Change back player friction to default.
-				GetComponent<CapsuleCollider>().material.dynamicFriction = 0.6f;
-				GetComponent<CapsuleCollider>().material.staticFriction = 0.6f;
+				Colider.material.dynamicFriction = 0.6f;
+				Colider.material.staticFriction = 0.6f;
 				// Set jump related parameters.
 				jump = false;
 				behaviourManager.GetAnim.SetBool(jumpBool, false);
@@ -176,14 +177,14 @@ public class MoveBehaviour : GenericBehaviour
 		// Slide on vertical obstacles
 		if (behaviourManager.IsCurrentBehaviour(this.GetBehaviourCode()) && collision.GetContact(0).normal.y <= 0.1f)
 		{
-			GetComponent<CapsuleCollider>().material.dynamicFriction = 0f;
-			GetComponent<CapsuleCollider>().material.staticFriction = 0f;
+			Colider.material.dynamicFriction = 0f;
+			Colider.material.staticFriction = 0f;
 		}
 	}
 	private void OnCollisionExit(Collision collision)
 	{
 		isColliding = false;
-		GetComponent<CapsuleCollider>().material.dynamicFriction = 0.6f;
-		GetComponent<CapsuleCollider>().material.staticFriction = 0.6f;
+		Colider.material.dynamicFriction = 0.6f;
+		Colider.material.staticFriction = 0.6f;
 	}
 }

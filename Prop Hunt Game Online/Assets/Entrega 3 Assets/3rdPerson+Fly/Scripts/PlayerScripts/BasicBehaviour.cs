@@ -9,6 +9,7 @@ public class BasicBehaviour : MonoBehaviour
 	public float turnSmoothing = 0.06f;                   // Speed of turn when moving to match camera facing.
 	public float sprintFOV = 100f;                        // the FOV to use on the camera when player is sprinting.
 	public string sprintButton = "Sprint";                // Default sprint button input name.
+	public CapsuleCollider Colider;
 
 	private float h;                                      // Horizontal Axis.
 	private float v;                                      // Vertical Axis.
@@ -57,7 +58,7 @@ public class BasicBehaviour : MonoBehaviour
 
 		// Grounded verification variables.
 		groundedBool = Animator.StringToHash("Grounded");
-		colExtents = GetComponent<Collider>().bounds.extents;
+		colExtents = Colider.bounds.extents;
 	}
 
 	void Update()
