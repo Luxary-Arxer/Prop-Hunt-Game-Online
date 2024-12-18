@@ -8,6 +8,7 @@ public class PlayerToProp : MonoBehaviour
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
     public bool hunter = false;
     public GameObject CaraterMesh;
+    public GameObject Gun;
 
     public GameObject transformTarget; // Referencia al objeto en el que te transformas.
     private Collider originalCollider;  // Colisionador original del jugador.
@@ -18,9 +19,9 @@ public class PlayerToProp : MonoBehaviour
 
     private void Start()
     {
-
-
+        PlayerTeam();
     }
+
 
     void Update()
     {
@@ -31,23 +32,9 @@ public class PlayerToProp : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-
-
-            if (hunter == true)
-            {
-                Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
-                materials[0] = Material_Alien;
-                Player_Renderer.sharedMaterials = materials;
-                hunter = false;
-            }
-            else
-            {
-                Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
-                materials[0] = Material_Hunter;
-                Player_Renderer.sharedMaterials = materials;
-                hunter = true;
-            }
+            hunter = !hunter;
         }
+        PlayerTeam();
 
         if (hunter == true){
             CaraterMesh.layer = 6;
@@ -131,6 +118,25 @@ public class PlayerToProp : MonoBehaviour
 
                 // Cambiar a la cámara o control del objeto destino si es necesario.
             }
+        }
+    }
+
+    //Mira la variable y canvia que pude hacer el player
+    void PlayerTeam()
+    {
+        if (hunter == true)
+        {
+            Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
+            materials[0] = Material_Alien;
+            Player_Renderer.sharedMaterials = materials;
+            Gun.SetActive(false);
+        }
+        else
+        {
+            Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
+            materials[0] = Material_Hunter;
+            Player_Renderer.sharedMaterials = materials;
+            Gun.SetActive(true);
         }
     }
 }
