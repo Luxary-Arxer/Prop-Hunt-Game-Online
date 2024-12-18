@@ -21,10 +21,10 @@ public class MoveBehaviour : GenericBehaviour
 //25012001
 	private Collider playerCollider; // Almacena el colisionador del jugador.
 //25012001
-	void Awake()
-	{
-		playerCollider = GetComponent<Collider>(); // Guardamos el colisionador original.
-	}
+	//void Awake()
+	//{
+	//	playerCollider = GetComponent<Collider>(); // Guardamos el colisionador original.
+	//}
 
 	// Start is always called after any Awake functions.
 	void Start()
@@ -48,16 +48,12 @@ public class MoveBehaviour : GenericBehaviour
 		{
 			jump = true;
 		}
-//25012001
-		if (Input.GetKeyDown(KeyCode.E))
-		{
-			TransformPlayer(); // Llamar al método para transformarse.
-		}
 	}
-//25012001
+	//25012001
+
 	void TransformPlayer()
 	{
-		Collider targetCollider = GameObject.FindWithTag("TransformTarget").GetComponent<Collider>();
+		Collider targetCollider = FindObjectWithLayer("TRANSFORM");
 
 		if (targetCollider != null)
 		{
@@ -70,6 +66,20 @@ public class MoveBehaviour : GenericBehaviour
 			// Realiza cualquier otra modificación necesaria en el controlador del jugador.
 		}
 	}
+
+	private Collider FindObjectWithLayer(string layerName)
+	{
+		LayerMask layerMask = LayerMask.NameToLayer(layerName); // Convertimos el nombre de la capa a LayerMask.
+		Collider[] colliders = Physics.OverlapSphere(transform.position, 100f, 1 << layerMask); // Busca colisiones dentro de una esfera al rededor del jugador.
+
+		if (colliders.Length > 0)
+		{
+			return colliders[0]; // Devuelve el primer colisionador con la capa especificada.
+		}
+
+		return null; // Devuelve null si no encuentra el objeto.
+	}
+	//------------------------------------------
 
 	// LocalFixedUpdate overrides the virtual function of the base class.
 	public override void LocalFixedUpdate()

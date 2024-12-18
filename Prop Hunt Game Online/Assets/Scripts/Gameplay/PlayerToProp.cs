@@ -8,6 +8,10 @@ public class PlayerToProp : MonoBehaviour
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
     public bool hunter = false;
     public GameObject CaraterMesh;
+
+    public GameObject transformTarget; // Referencia al objeto en el que te transformas.
+    private Collider originalCollider;  // Colisionador original del jugador.
+
     void Update()
     {
 
@@ -36,6 +40,8 @@ public class PlayerToProp : MonoBehaviour
             {
                 CaraterMesh.SetActive(true);
                 currentModel.SetActive(false);
+
+                TransformPlayer();
             }
         }
 
@@ -70,5 +76,27 @@ public class PlayerToProp : MonoBehaviour
         // Actualizar la referencia del modelo actual
         currentModel = newModel;
         Debug.Log("Transformación completada en: " + targetObject.name);
+    }
+
+    void TransformPlayer()
+    {
+        if (transformTarget != null)
+        {
+            // Cambiar el colisionador del jugador al colisionador del objeto de transformación.
+            CapsuleCollider playerCollider = GetComponent<CapsuleCollider>();
+            Collider targetCollider = transformTarget.GetComponent<Collider>();
+
+            if (targetCollider != null)
+            {
+                // Guardar el colisionador original.
+                originalCollider = playerCollider;
+                // Desactivar el colisionador actual.
+                playerCollider.enabled = false;
+                // Añadir el colisionador del objeto destino.
+                transformTarget.GetComponent<Collider>().enabled = true;
+
+                // Cambiar a la cámara o control del objeto destino si es necesario.
+            }
+        }
     }
 }

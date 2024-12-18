@@ -44,6 +44,8 @@ public class BasicBehaviour : MonoBehaviour
 
 	// Get current default behaviour.
 	public int GetDefaultBehaviour => defaultBehaviour;
+//25012001
+	public Collider newCollider;   // Nueva referencia para el collider al que se transforma.
 
 	void Awake ()
 	{
@@ -59,6 +61,12 @@ public class BasicBehaviour : MonoBehaviour
 		// Grounded verification variables.
 		groundedBool = Animator.StringToHash("Grounded");
 		colExtents = Colider.bounds.extents;
+
+//25012001
+// Guardar el colisionador original.
+	 Collider currentPlayerCollider = Colider;
+		// Inicializar el nuevo colisionador.
+		newCollider = null;
 	}
 
 	void Update()
@@ -88,6 +96,23 @@ public class BasicBehaviour : MonoBehaviour
 		// Set the grounded test on the Animator Controller.
 		anim.SetBool(groundedBool, IsGrounded());
 	}
+
+//25012001
+	public void ChangeCollider(Collider newCol)
+	{
+		if (newCollider != null)
+			Destroy(newCollider);
+
+		newCollider = Instantiate(newCol, transform);  // Crea el nuevo collider.
+		newCollider.transform.localPosition = Vector3.zero;
+		newCollider.transform.localRotation = Quaternion.identity;
+	}
+
+	public void TransformPlayer(Collider newCol)
+	{
+		ChangeCollider(newCol);  // Aplicar nuevo colisionador.
+	}
+
 
 	// Call the FixedUpdate functions of the active or overriding behaviours.
 	void FixedUpdate()
