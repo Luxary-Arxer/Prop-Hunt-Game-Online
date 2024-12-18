@@ -9,7 +9,7 @@ public class BasicBehaviour : MonoBehaviour
 	public float turnSmoothing = 0.06f;                   // Speed of turn when moving to match camera facing.
 	public float sprintFOV = 100f;                        // the FOV to use on the camera when player is sprinting.
 	public string sprintButton = "Sprint";                // Default sprint button input name.
-	public CapsuleCollider Colider;
+	public Collider Colider;
 
 	private float h;                                      // Horizontal Axis.
 	private float v;                                      // Vertical Axis.
