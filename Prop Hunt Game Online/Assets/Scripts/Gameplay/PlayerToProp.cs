@@ -124,7 +124,7 @@ public class PlayerToProp : MonoBehaviour
     //Mira la variable y canvia que pude hacer el player
     void PlayerTeam()
     {
-        if (hunter == true)
+        if (hunter == false)
         {
             Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
             materials[0] = Material_Alien;
