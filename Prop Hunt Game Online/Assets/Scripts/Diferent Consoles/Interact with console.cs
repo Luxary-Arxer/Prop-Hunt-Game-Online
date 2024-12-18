@@ -21,7 +21,7 @@ public class Interactwithconsole : MonoBehaviour
             {
                 if (collider.TryGetComponent(out ConsoletoHunter Console_Hunter)){ 
                     Console_Hunter.Interact(); }
-                Debug.Log(collider);
+                //Debug.Log(collider);
             }
         }
     }

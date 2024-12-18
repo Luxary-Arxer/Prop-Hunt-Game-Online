@@ -12,7 +12,7 @@ public class ConsoletoHunter : MonoBehaviour
 
     public void Interact()
     {
-        Debug.Log("Interact");
+        Debug.Log("Interact hunter");
     }
     // Update is called once per frame
     void Update()
