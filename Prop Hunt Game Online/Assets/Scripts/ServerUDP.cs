@@ -7,32 +7,42 @@ using System.Collections.Generic;
 
 public class ServerUDP : MonoBehaviour
 {
-    Socket socket;
-    public GameObject playerCube; // Objeto que se moverá según los datos del cliente
-    public GameObject serverObject; // Objeto controlado por el servidor
-    public int numPlayers;
-
-
-    private Queue<Vector3> positionQueue = new Queue<Vector3>();
+    private Socket socket;
     private bool running = true;
+    Vector3 serverPosition;
+    Vector3 serverRotation;
 
-    private Vector3 newPosition_server;
-    private Vector3 newRotation_server;
+    // Diccionario para manejar múltiples clientes (clave: EndPoint, valor: datos del cliente)
+    private Dictionary<EndPoint, ClientData> clients = new Dictionary<EndPoint, ClientData>();
 
-    Vector3 playerPosition; // Posición del jugador
-    Vector3 playerRotation; // Rotación del jugador
+   
+    public GameObject clientPrefab;
+    public GameObject serverPrefab;
 
-    private string message;
-    private string message_enviar;
-    private float x;
-    private float y;
-    private float z;
+    // Cola para gestionar la creación de clientes y actualizaciones en el hilo principal
+    private Queue<ClientUpdate> clientUpdateQueue = new Queue<ClientUpdate>();
+
+    // Clase para manejar la información de los clientes
+    private class ClientData
+    {
+        public GameObject playerObject; // Representa al cliente en la escena
+        public Vector3 position;
+        public Vector3 rotation;
+    }
+
+    // Clase para manejar las actualizaciones de los clientes
+    private class ClientUpdate
+    {
+        public EndPoint remote;
+        public Vector3 position;
+        public Vector3 rotation;
+        public bool isNewClient;
+    }
+
     void Start()
     {
         StartServer();
-        // Inicializar posición y mensaje
-        playerPosition = transform.position;
-        message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z;
+        //serverPrefab = gameObject;
     }
 
     void StartServer()
@@ -60,23 +70,23 @@ public class ServerUDP : MonoBehaviour
     void Receive()
     {
         byte[] data = new byte[1024];
-        IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-        EndPoint remote = (EndPoint)sender;
-        Debug.Log("Mensaje running: " + running);
+        EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
+
         try
         {
             while (running)
             {
                 int recv = socket.ReceiveFrom(data, ref remote);
-                message = Encoding.ASCII.GetString(data, 0, recv);
-                Debug.Log("Mensaje recibido del cliente: " + message);
+                string message = Encoding.ASCII.GetString(data, 0, recv);
+
+                Debug.Log($"Mensaje recibido de {remote}: {message}");
 
                 if (message.Contains("Position:"))
                 {
-                    UpdatePositionQueue(message);
-                    UpdateRotation(message);
+                    UpdateClientData(remote, message); // Actualizar posición/rotación del cliente
                 }
-                Send(remote);
+
+                BroadcastData(); // Enviar datos de todos los clientes
             }
         }
         catch (SocketException e)
@@ -85,7 +95,7 @@ public class ServerUDP : MonoBehaviour
         }
     }
 
-    void UpdatePositionQueue(string message)
+    void UpdateClientData(EndPoint remote, string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split("|");
         if (positionData.Length == 6)
@@ -93,85 +103,108 @@ public class ServerUDP : MonoBehaviour
             float x = float.Parse(positionData[0]);
             float y = float.Parse(positionData[1]);
             float z = float.Parse(positionData[2]);
-            Vector3 newPosition = new Vector3(x, y + 0f, z);
+            float rotX = float.Parse(positionData[3]);
+            float rotY = float.Parse(positionData[4]);
+            float rotZ = float.Parse(positionData[5]);
 
-            /*
-            float x_rotation = float.Parse(positionData[3]);
-            float y_rotation = float.Parse(positionData[4]);
-            float z_rotation = float.Parse(positionData[5]);
-            Vector3 newRotation = new Vector3(x, y, z);
-            */
+            bool isNewClient = !clients.ContainsKey(remote);
 
-            // Agregar la nueva posición a la cola
-            positionQueue.Enqueue(newPosition);
-        }
-    }
-    void UpdateRotation(string message)
-    {
-        string[] positionData = message.Split(':')[1].Trim().Split("|");
-        if (positionData.Length == 6)
-        {
-            
-            float x_rotation = float.Parse(positionData[3]);
-            float y_rotation = float.Parse(positionData[4]);
-            float z_rotation = float.Parse(positionData[5]);
-            Vector3 newRotation = new Vector3(x_rotation, y_rotation, z_rotation);
-            
-
-            // Agregar la nueva posición a la cola
-            positionQueue.Enqueue(newRotation);
-        }
-    }
-
-    void Update()
-    {
-        if (positionQueue.Count > 0) 
-        {
-
-            newPosition_server = positionQueue.Dequeue();
-
-            newRotation_server = positionQueue.Dequeue();
-
-            if (playerCube.activeSelf == false && playerCube.transform.position != newPosition_server)
-            {          
-                playerCube.SetActive(true);
-            }
-            playerCube.transform.position = newPosition_server;
-
-            playerCube.transform.eulerAngles = newRotation_server;
-
-            Debug.Log("Posición X " + newPosition_server.x + "Posición Z " + newPosition_server.z);
-            //Crear una copia del player asset para tener mas de 1 cliente no funciona
-            /*
-            if (numPlayers == 1)
+            lock (clientUpdateQueue)
             {
-                GameObject playerClient = GameObject.Instantiate(playerCube);
-                playerClient.SetActive(true);
-                playerClient.transform.position = newPosition;
+                clientUpdateQueue.Enqueue(new ClientUpdate
+                {
+                    remote = remote,
+                    position = new Vector3(x, y, z),
+                    rotation = new Vector3(rotX, rotY, rotZ),
+                    isNewClient = isNewClient
+                });
             }
-            */
         }
-        //Enviar la posicion del player
-        playerPosition = transform.position;
-        playerRotation = transform.eulerAngles;
-        message_enviar = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
-        + "|" + playerRotation.x + "|" + playerRotation.y + "|" + +playerRotation.z;
     }
 
-    void Send(EndPoint remote)
+    void AddNewClient(EndPoint remote)
+    {
+        Debug.Log($"Nuevo cliente conectado: {remote}");
+
+        // Instanciar un nuevo GameObject para el cliente en el hilo principal
+        GameObject newPlayerObject = Instantiate(clientPrefab, Vector3.zero, Quaternion.identity);
+        newPlayerObject.name = $"Player_{remote}";
+
+        // Agregar al diccionario de clientes
+        clients[remote] = new ClientData
+        {
+            playerObject = newPlayerObject,
+            position = Vector3.zero,
+            rotation = Vector3.zero
+        };
+
+        Debug.Log($"Se creó un objeto para el cliente: {remote}");
+    }
+
+    void BroadcastData()
     {
         try
         {
-            byte[] data = Encoding.ASCII.GetBytes(message_enviar);
-            socket.SendTo(data, remote);
-            Debug.Log("Datos enviados al cliente: " + message_enviar);
 
+            // Obtener la posición y rotación del GameObject del servidor
+
+
+            // Construir el mensaje con los datos del servidor
+            string messageToSend = $"Position:{serverPosition.x}|{serverPosition.y}|{serverPosition.z}|" +
+                                   $"{serverRotation.x}|{serverRotation.y}|{serverRotation.z}";
+            foreach (var client in clients)
+            {
+                EndPoint clientEndPoint = client.Key;
+                //ClientData data = client.Value;
+
+                // Formato compatible con el cliente
+                //string messageToSend = $"Position:{data.position.x}|{data.position.y}|{data.position.z}|{data.rotation.x}|{data.rotation.y}|{data.rotation.z}";
+                //string messageToSend = $"Position:{gameObject.transform.position.x}|{gameObject.transform.position.y}|{gameObject.transform.position.z}|{gameObject.transform.rotation.x}|{gameObject.transform.rotation.y}|{gameObject.transform.rotation.z}";
+
+                byte[] sendData = Encoding.ASCII.GetBytes(messageToSend);
+                socket.SendTo(sendData, clientEndPoint);
+
+                Debug.Log($"Datos enviados al cliente {clientEndPoint}: {messageToSend}");
+            }
         }
         catch (SocketException e)
         {
             Debug.LogError("Error al enviar datos: " + e.Message);
         }
     }
+
+    void Update()
+    {
+
+         serverPosition = serverPrefab.transform.position;
+         serverRotation = serverPrefab.transform.eulerAngles;
+        // Procesar la cola de actualizaciones de clientes en el hilo principal
+        lock (clientUpdateQueue)
+        {
+            while (clientUpdateQueue.Count > 0)
+            {
+                ClientUpdate clientUpdate = clientUpdateQueue.Dequeue();
+                if (clientUpdate.isNewClient)
+                {
+                    AddNewClient(clientUpdate.remote);
+                }
+
+                // Actualizar los datos del cliente en el hilo principal
+                if (clients.ContainsKey(clientUpdate.remote))
+                {
+                    clients[clientUpdate.remote].position = clientUpdate.position;
+                    clients[clientUpdate.remote].rotation = clientUpdate.rotation;
+
+                    GameObject playerObject = clients[clientUpdate.remote].playerObject;
+                    playerObject.transform.position = clientUpdate.position;
+                    playerObject.transform.eulerAngles = clientUpdate.rotation;
+
+                    Debug.Log("Posición actualizada del jugador " + clientUpdate.remote.ToString() + ": " + clientUpdate.position);
+                }
+            }
+        }
+    }
+
     private void OnDestroy()
     {
         running = false;
