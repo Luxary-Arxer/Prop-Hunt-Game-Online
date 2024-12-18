@@ -19,7 +19,7 @@ public class Timer : MonoBehaviour
         tiempo = 0f; // Iniciar en 0
         enMarcha = true; // Activar el cronómetro
 
-        // Asegúrate de que el fondo y el mensaje estén desactivados al inicio
+     
         if (fondo != null)
             fondo.gameObject.SetActive(false);
 
@@ -51,7 +51,7 @@ public class Timer : MonoBehaviour
     {
         if (fondo != null)
         {
-            fondo.gameObject.SetActive(true); // Activar el RawImage
+            fondo.gameObject.SetActive(true); // Activar el fondo
         }
 
         if (mensajeTexto != null)
@@ -64,7 +64,7 @@ public class Timer : MonoBehaviour
 
     public void DetenerCronometro()
     {
-        enMarcha = false; // Pausar el cronómetro
+        enMarcha = false; 
     }
 
     public void ReiniciarCronometro()
@@ -72,7 +72,7 @@ public class Timer : MonoBehaviour
         tiempo = 0f; // Reiniciar el tiempo
         enMarcha = true; // Volver a activar el cronómetro
 
-        // Asegurarse de que el fondo y el mensaje estén desactivados
+        
         if (fondo != null)
             fondo.gameObject.SetActive(false);
 
