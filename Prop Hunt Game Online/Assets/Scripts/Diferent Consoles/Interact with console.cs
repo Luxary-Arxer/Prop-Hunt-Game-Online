@@ -19,8 +19,14 @@ public class Interactwithconsole : MonoBehaviour
             Collider[] collider_array = Physics.OverlapSphere(transform.position, interact_Range);
             foreach (Collider collider in collider_array)
             {
-                if (collider.TryGetComponent(out ConsoletoHunter Console_Hunter)){ 
-                    Console_Hunter.Interact(); }
+                if (collider.TryGetComponent(out ConsoletoHunter Console_Hunter))
+                { 
+                    Console_Hunter.Interact(); 
+                }
+                if (collider.TryGetComponent(out ConsoletoAlien Console_Alien))
+                {
+                    Console_Hunter.Interact();
+                }
                 //Debug.Log(collider);
             }
         }
