@@ -20,9 +20,16 @@ public class PlayerToProp : MonoBehaviour
         RaycastHit hit;
 
 
+
+        if (hunter == true){
+            CaraterMesh.layer = 6;
+            CaraterMesh.SetActive(true);
+            currentModel.SetActive(false);
+        }
         // Para saver que tipo de player es
         if (hunter == false)
         {
+            CaraterMesh.layer = 7;
             // Verificar si el rayo impacta con un objeto en la capa transformable
             if (Physics.Raycast(ray, out hit, transformDistance, transformLayer))
             {
@@ -60,16 +67,14 @@ public class PlayerToProp : MonoBehaviour
         // Destruir el modelo actual
         if (currentModel != null)
         {
-
             CaraterMesh.SetActive(false);
             Destroy(currentModel);
             Debug.Log("Modelo actual destruido.");
         }
 
-
-
         // Crear un nuevo modelo basado en el objetivo
         GameObject newModel = Instantiate(targetObject, modelParent);
+        newModel.layer = 7;
         newModel.transform.localPosition = new Vector3(0f,0.6f,-0.5f);
         newModel.transform.localRotation = Quaternion.identity;
 
