@@ -17,12 +17,16 @@ public class ClientUDP : MonoBehaviour
     private Queue<Vector3> positionQueue = new Queue<Vector3>();
     private Vector3 newPosition_server;
     private Vector3 newRotation_server;
+    private Vector3 lastPosition;
+    private Vector3 lastRotation;
 
     void Start()
     {
         // Inicializar posición y mensaje
         playerPosition = transform.position;
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z;
+        lastPosition = serverObject.transform.position;
+        lastRotation = serverObject.transform.eulerAngles;
 
         // Obtener IP del servidor desde JoinInformation si está configurada
         if (JoinInformation.client_Home != null && !string.IsNullOrEmpty(JoinInformation.client_Home.clientIP))
@@ -41,7 +45,7 @@ public class ClientUDP : MonoBehaviour
 
     void Update()
     {
-        if (positionQueue.Count > 0)
+        if (positionQueue.Count > 2)
         {
             newPosition_server = positionQueue.Dequeue();
             newRotation_server = positionQueue.Dequeue();
@@ -51,8 +55,17 @@ public class ClientUDP : MonoBehaviour
                 serverObject.SetActive(true);
             }
 
-            serverObject.transform.position = newPosition_server;
-            serverObject.transform.eulerAngles = newRotation_server;
+            // Interpolación de la posición y rotación para suavizar el movimiento
+            serverObject.transform.position = Vector3.Lerp(lastPosition, newPosition_server, 0.5f);
+            serverObject.transform.eulerAngles = Vector3.Lerp(lastRotation, newRotation_server, 0.5f);
+
+            lastPosition = serverObject.transform.position;
+            lastRotation = serverObject.transform.eulerAngles;
+
+            //serverObject.transform.position = newPosition_server;
+           // serverObject.transform.eulerAngles = newRotation_server;
+
+
         }
 
         // Actualizar la posición del jugador y el mensaje
@@ -60,7 +73,7 @@ public class ClientUDP : MonoBehaviour
         playerRotation = transform.eulerAngles;
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
             + "|" + playerRotation.x + "|" + playerRotation.y + "|" + playerRotation.z;
-        Debug.Log("Posición X " + newPosition_server.x + " Posición Z " + newPosition_server.z);
+        //Debug.Log("Posición X " + newPosition_server.x + " Posición Z " + newPosition_server.z);
     }
 
     void InitializeSocket()
@@ -140,17 +153,21 @@ public class ClientUDP : MonoBehaviour
         {
             while (running)
             {
+                // Recibir mensaje sin bloquear innecesariamente el hilo
                 int recv = socket.ReceiveFrom(data, ref remote);
-                string receivedMessage = Encoding.ASCII.GetString(data, 0, recv);
-                Debug.Log("Mensaje recibido del servidor: " + receivedMessage);
-
-                if (receivedMessage.Contains("Position:"))
+               
+                if (recv > 0) // Solo procesar si se recibieron datos
                 {
-                    UpdatePositionQueue(receivedMessage);
-                    UpdateRotation(receivedMessage);
+                    // Convertir solo cuando sea necesario
+                    string receivedMessage = Encoding.ASCII.GetString(data, 0, recv);
+                    Debug.Log($"Mensaje recibido de {remote}: {receivedMessage}");
+                    // Solo procesar mensajes relevantes
+                    if (receivedMessage.Contains("Position:"))
+                    {
+                        UpdatePositionQueue(receivedMessage);
+                        UpdateRotation(receivedMessage);
+                    }
                 }
-
-                Thread.Sleep(16); //60FPS
             }
         }
         catch (SocketException e)

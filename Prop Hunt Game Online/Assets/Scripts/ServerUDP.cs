@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using System.Threading;
 using System.Collections.Generic;
+using System;
 
 public class ServerUDP : MonoBehaviour
 {
@@ -77,16 +78,23 @@ public class ServerUDP : MonoBehaviour
             while (running)
             {
                 int recv = socket.ReceiveFrom(data, ref remote);
-                string message = Encoding.ASCII.GetString(data, 0, recv);
 
-                Debug.Log($"Mensaje recibido de {remote}: {message}");
-
-                if (message.Contains("Position:"))
+                if (recv > 0)
                 {
-                    UpdateClientData(remote, message); // Actualizar posición/rotación del cliente
-                }
 
-                BroadcastData(); // Enviar datos de todos los clientes
+
+                    string message = Encoding.ASCII.GetString(data, 0, recv);
+
+                    Debug.Log($"Mensaje recibido de {remote}: {message}");
+
+                    if (message.Contains("Position:"))
+                    {
+                        UpdateClientData(remote, message); // Actualizar posición/rotación del cliente
+                    }
+
+                    BroadcastData(); // Enviar datos de todos los clientes
+                    Thread.Sleep(5);
+                }
             }
         }
         catch (SocketException e)
@@ -181,26 +189,37 @@ public class ServerUDP : MonoBehaviour
         // Procesar la cola de actualizaciones de clientes en el hilo principal
         lock (clientUpdateQueue)
         {
-            while (clientUpdateQueue.Count > 0)
+            try
             {
-                ClientUpdate clientUpdate = clientUpdateQueue.Dequeue();
-                if (clientUpdate.isNewClient)
+                while (clientUpdateQueue.Count > 0)
                 {
-                    AddNewClient(clientUpdate.remote);
+                    ClientUpdate clientUpdate = clientUpdateQueue.Dequeue();
+                    if (clientUpdate.isNewClient)
+                    {
+                        AddNewClient(clientUpdate.remote);
+                    }
+
+                    // Actualizar los datos del cliente en el hilo principal
+                    if (clients.ContainsKey(clientUpdate.remote))
+                    {
+                        clients[clientUpdate.remote].position = clientUpdate.position;
+                        clients[clientUpdate.remote].rotation = clientUpdate.rotation;
+
+                        GameObject playerObject = clients[clientUpdate.remote].playerObject;
+                        playerObject.transform.position = clientUpdate.position;
+                        playerObject.transform.eulerAngles = clientUpdate.rotation;
+
+                        Debug.Log("Posición actualizada del jugador " + clientUpdate.remote.ToString() + ": " + clientUpdate.position);
+                    }
                 }
+            }
 
-                // Actualizar los datos del cliente en el hilo principal
-                if (clients.ContainsKey(clientUpdate.remote))
-                {
-                    clients[clientUpdate.remote].position = clientUpdate.position;
-                    clients[clientUpdate.remote].rotation = clientUpdate.rotation;
 
-                    GameObject playerObject = clients[clientUpdate.remote].playerObject;
-                    playerObject.transform.position = clientUpdate.position;
-                    playerObject.transform.eulerAngles = clientUpdate.rotation;
+            catch (InvalidOperationException ex)
+            {
+                Debug.LogError("Error al procesar la cola: " + ex.Message);
 
-                    Debug.Log("Posición actualizada del jugador " + clientUpdate.remote.ToString() + ": " + clientUpdate.position);
-                }
+
             }
         }
     }
