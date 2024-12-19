@@ -4,7 +4,6 @@ using System.Text;
 using UnityEngine;
 using System.Threading;
 using System.Collections.Generic;
-using System;
 
 public class ServerUDP : MonoBehaviour
 {
@@ -12,38 +11,34 @@ public class ServerUDP : MonoBehaviour
     private bool running = true;
     Vector3 serverPosition;
     Vector3 serverRotation;
-
-    // Diccionario para manejar múltiples clientes (clave: EndPoint, valor: datos del cliente)
+    bool serverTeamHunter;
     private Dictionary<EndPoint, ClientData> clients = new Dictionary<EndPoint, ClientData>();
 
-   
     public GameObject clientPrefab;
     public GameObject serverPrefab;
 
-    // Cola para gestionar la creación de clientes y actualizaciones en el hilo principal
     private Queue<ClientUpdate> clientUpdateQueue = new Queue<ClientUpdate>();
 
-    // Clase para manejar la información de los clientes
     private class ClientData
     {
-        public GameObject playerObject; // Representa al cliente en la escena
+        public GameObject playerObject;
         public Vector3 position;
         public Vector3 rotation;
+        public bool isHunter;
+        public GameObject mesh;
     }
 
-    // Clase para manejar las actualizaciones de los clientes
     private class ClientUpdate
     {
         public EndPoint remote;
         public Vector3 position;
         public Vector3 rotation;
-        public bool isNewClient;
+        public bool isHunter;
     }
 
     void Start()
     {
         StartServer();
-        //serverPrefab = gameObject;
     }
 
     void StartServer()
@@ -56,7 +51,7 @@ public class ServerUDP : MonoBehaviour
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             socket.Bind(ipep);
 
-            Debug.Log("Servidor iniciado en el puerto 9050");
+            Debug.Log("Servidor iniciado en " + ipep.Address.ToString());
 
             Thread receiveThread = new Thread(Receive);
             receiveThread.IsBackground = true;
@@ -73,153 +68,94 @@ public class ServerUDP : MonoBehaviour
         byte[] data = new byte[1024];
         EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
 
-        try
+        while (running)
         {
-            while (running)
+            int recv = socket.ReceiveFrom(data, ref remote);
+
+            if (recv > 0)
             {
-                int recv = socket.ReceiveFrom(data, ref remote);
+                string message = Encoding.ASCII.GetString(data, 0, recv);
 
-                if (recv > 0)
+                if (message.Contains("Position:"))
                 {
-
-
-                    string message = Encoding.ASCII.GetString(data, 0, recv);
-
-                    Debug.Log($"Mensaje recibido de {remote}: {message}");
-
-                    if (message.Contains("Position:"))
-                    {
-                        UpdateClientData(remote, message); // Actualizar posición/rotación del cliente
-                    }
-
-                    BroadcastData(); // Enviar datos de todos los clientes
-                    Thread.Sleep(5);
+                    ProcessMessage(remote, message);
                 }
             }
         }
-        catch (SocketException e)
-        {
-            Debug.LogError("Error al recibir datos: " + e.Message);
-        }
     }
 
-    void UpdateClientData(EndPoint remote, string message)
+    void ProcessMessage(EndPoint remote, string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split("|");
-        if (positionData.Length == 6)
+        if (positionData.Length == 7)
         {
             float x = float.Parse(positionData[0]);
             float y = float.Parse(positionData[1]);
             float z = float.Parse(positionData[2]);
-            float rotX = float.Parse(positionData[3]);
-            float rotY = float.Parse(positionData[4]);
-            float rotZ = float.Parse(positionData[5]);
+            float x_rotation = float.Parse(positionData[3]);
+            float y_rotation = float.Parse(positionData[4]);
+            float z_rotation = float.Parse(positionData[5]);
+            bool isHunter = bool.Parse(positionData[6]);
 
-            bool isNewClient = !clients.ContainsKey(remote);
-
-            lock (clientUpdateQueue)
+            ClientUpdate newUpdate = new ClientUpdate
             {
-                clientUpdateQueue.Enqueue(new ClientUpdate
-                {
-                    remote = remote,
-                    position = new Vector3(x, y, z),
-                    rotation = new Vector3(rotX, rotY, rotZ),
-                    isNewClient = isNewClient
-                });
-            }
+                remote = remote,
+                position = new Vector3(x, y, z),
+                rotation = new Vector3(x_rotation, y_rotation, z_rotation),
+                isHunter = isHunter
+            };
+
+            clientUpdateQueue.Enqueue(newUpdate);
         }
-    }
-
-    void AddNewClient(EndPoint remote)
-    {
-        Debug.Log($"Nuevo cliente conectado: {remote}");
-
-        // Instanciar un nuevo GameObject para el cliente en el hilo principal
-        GameObject newPlayerObject = Instantiate(clientPrefab, Vector3.zero, Quaternion.identity);
-        newPlayerObject.name = $"Player_{remote}";
-
-        // Agregar al diccionario de clientes
-        clients[remote] = new ClientData
-        {
-            playerObject = newPlayerObject,
-            position = Vector3.zero,
-            rotation = Vector3.zero
-        };
-
-        Debug.Log($"Se creó un objeto para el cliente: {remote}");
     }
 
     void BroadcastData()
     {
-        try
+        foreach (var client in clients)
         {
+            ClientData data = client.Value;
+            string messageToSend = $"Position:{data.position.x}|{data.position.y}|{data.position.z}|" +
+                                   $"{data.rotation.x}|{data.rotation.y}|{data.rotation.z}|" +
+                                   $"{data.isHunter.ToString()}|" +
+                                   $"{(data.mesh != null ? data.mesh.name : "default_mesh")}";
+            byte[] sendData = Encoding.ASCII.GetBytes(messageToSend);
+            socket.SendTo(sendData, client.Key);
 
-            // Obtener la posición y rotación del GameObject del servidor
-
-
-            // Construir el mensaje con los datos del servidor
-            string messageToSend = $"Position:{serverPosition.x}|{serverPosition.y}|{serverPosition.z}|" +
-                                   $"{serverRotation.x}|{serverRotation.y}|{serverRotation.z}";
-            foreach (var client in clients)
-            {
-                EndPoint clientEndPoint = client.Key;
-                //ClientData data = client.Value;
-
-                // Formato compatible con el cliente
-                //string messageToSend = $"Position:{data.position.x}|{data.position.y}|{data.position.z}|{data.rotation.x}|{data.rotation.y}|{data.rotation.z}";
-                //string messageToSend = $"Position:{gameObject.transform.position.x}|{gameObject.transform.position.y}|{gameObject.transform.position.z}|{gameObject.transform.rotation.x}|{gameObject.transform.rotation.y}|{gameObject.transform.rotation.z}";
-
-                byte[] sendData = Encoding.ASCII.GetBytes(messageToSend);
-                socket.SendTo(sendData, clientEndPoint);
-
-                Debug.Log($"Datos enviados al cliente {clientEndPoint}: {messageToSend}");
-            }
-        }
-        catch (SocketException e)
-        {
-            Debug.LogError("Error al enviar datos: " + e.Message);
+            Debug.Log($"Datos enviados al cliente {client.Key}: {messageToSend}");
         }
     }
 
     void Update()
     {
-
-         serverPosition = serverPrefab.transform.position;
-         serverRotation = serverPrefab.transform.eulerAngles;
-        // Procesar la cola de actualizaciones de clientes en el hilo principal
-        lock (clientUpdateQueue)
+        while (clientUpdateQueue.Count > 0)
         {
-            try
+            ClientUpdate update = clientUpdateQueue.Dequeue();
+
+            if (!clients.ContainsKey(update.remote))
             {
-                while (clientUpdateQueue.Count > 0)
-                {
-                    ClientUpdate clientUpdate = clientUpdateQueue.Dequeue();
-                    if (clientUpdate.isNewClient)
-                    {
-                        AddNewClient(clientUpdate.remote);
-                    }
-
-                    // Actualizar los datos del cliente en el hilo principal
-                    if (clients.ContainsKey(clientUpdate.remote))
-                    {
-                        clients[clientUpdate.remote].position = clientUpdate.position;
-                        clients[clientUpdate.remote].rotation = clientUpdate.rotation;
-
-                        GameObject playerObject = clients[clientUpdate.remote].playerObject;
-                        playerObject.transform.position = clientUpdate.position;
-                        playerObject.transform.eulerAngles = clientUpdate.rotation;
-
-                        Debug.Log("Posición actualizada del jugador " + clientUpdate.remote.ToString() + ": " + clientUpdate.position);
-                    }
-                }
+                clients[update.remote] = new ClientData();
             }
 
+            ClientData clientData = clients[update.remote];
+            clientData.position = update.position;
+            clientData.rotation = update.rotation;
+            clientData.isHunter = update.isHunter;
 
-            catch (InvalidOperationException ex)
+            GameObject clientObject = Instantiate(clientPrefab, clientData.position, Quaternion.Euler(clientData.rotation));
+            clientObject.SetActive(true);
+            clientObject.GetComponent<PlayerToProp>().Hunter = update.isHunter;
+
+            if (update.isHunter)
             {
-                Debug.LogError("Error al procesar la cola: " + ex.Message);
-
-
+                clientObject.GetComponent<PlayerToProp>().CaraterMesh.SetActive(false); // Mesh principal
+                clientObject.GetComponent<PlayerToProp>().currentModel.SetActive(true);
+            }
+            else
+            {
+                GameObject propMesh = Resources.Load<GameObject>("PropMesh"); // Change this with your actual prefab path
+                GameObject prop = Instantiate(propMesh, clientData.position, Quaternion.identity);
+                prop.SetActive(true);
+                clientData.mesh = prop;
             }
         }
     }
@@ -227,9 +163,6 @@ public class ServerUDP : MonoBehaviour
     private void OnDestroy()
     {
         running = false;
-        if (socket != null)
-        {
-            socket.Close();
-        }
+        socket.Close();
     }
 }

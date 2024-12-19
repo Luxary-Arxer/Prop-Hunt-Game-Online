@@ -8,22 +8,33 @@ using System.Collections.Generic;
 public class ClientUDP : MonoBehaviour
 {
     private Socket socket;
-    public string IPServer; 
-    private Vector3 playerPosition; 
-    private Vector3 playerRotation; 
+    public string IPServer;
+    private Vector3 playerPosition;
+    private Vector3 playerRotation;
+    private bool playerTeamHunter; // Para determinar si el jugador está en el equipo "Hunter" o "Hider"
     private string message; // Mensaje a enviar
     private bool running = true; // Bandera para manejar el bucle de envío
     public GameObject serverObject;
-    private Queue<Vector3> positionQueue = new Queue<Vector3>();
-    private Vector3 newPosition_server;
-    private Vector3 newRotation_server;
+    private Queue<ReplicationData> replicationQueue = new Queue<ReplicationData>();
+    private ReplicationData newReplicationData;
     private Vector3 lastPosition;
     private Vector3 lastRotation;
+
+    // Data structure for replication (Position, Rotation, Team, Mesh)
+    private class ReplicationData
+    {
+        public Vector3 position;
+        public Vector3 rotation;
+        public bool isHunter;
+        public GameObject mesh;
+    }
 
     void Start()
     {
         // Inicializar posición y mensaje
         playerPosition = transform.position;
+        playerRotation = transform.eulerAngles;
+        playerTeamHunter = false; // Inicializar como "Hider" por defecto
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z;
         lastPosition = serverObject.transform.position;
         lastRotation = serverObject.transform.eulerAngles;
@@ -45,35 +56,32 @@ public class ClientUDP : MonoBehaviour
 
     void Update()
     {
-        if (positionQueue.Count > 2)
+        if (replicationQueue.Count > 0)
         {
-            newPosition_server = positionQueue.Dequeue();
-            newRotation_server = positionQueue.Dequeue();
+            newReplicationData = replicationQueue.Dequeue();
 
-            if (!serverObject.activeSelf && serverObject.transform.position != newPosition_server)
+            if (!serverObject.activeSelf && serverObject.transform.position != newReplicationData.position)
             {
                 serverObject.SetActive(true);
             }
 
             // Interpolación de la posición y rotación para suavizar el movimiento
-            serverObject.transform.position = Vector3.Lerp(lastPosition, newPosition_server, 0.5f);
-            serverObject.transform.eulerAngles = Vector3.Lerp(lastRotation, newRotation_server, 0.5f);
+            serverObject.transform.position = Vector3.Lerp(lastPosition, newReplicationData.position, 0.5f);
+            serverObject.transform.eulerAngles = Vector3.Lerp(lastRotation, newReplicationData.rotation, 0.5f);
 
             lastPosition = serverObject.transform.position;
             lastRotation = serverObject.transform.eulerAngles;
 
-            //serverObject.transform.position = newPosition_server;
-           // serverObject.transform.eulerAngles = newRotation_server;
-
-
+            // Aplicar la lógica del equipo y cambiar la mesh si es necesario
+            UpdateTeamAndMesh(newReplicationData);
         }
 
         // Actualizar la posición del jugador y el mensaje
         playerPosition = transform.position;
         playerRotation = transform.eulerAngles;
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
-            + "|" + playerRotation.x + "|" + playerRotation.y + "|" + playerRotation.z;
-        //Debug.Log("Posición X " + newPosition_server.x + " Posición Z " + newPosition_server.z);
+            + "|" + playerRotation.x + "|" + playerRotation.y + "|" + playerRotation.z
+            + "|" + playerTeamHunter.ToString(); // Enviar si es Hunter o Hider
     }
 
     void InitializeSocket()
@@ -126,7 +134,6 @@ public class ClientUDP : MonoBehaviour
                 socket.SendTo(data, ipep);
                 Debug.Log("Datos enviados al servidor: " + message);
 
-                
                 Thread.Sleep(16); // 60FPS
             }
         }
@@ -155,7 +162,7 @@ public class ClientUDP : MonoBehaviour
             {
                 // Recibir mensaje sin bloquear innecesariamente el hilo
                 int recv = socket.ReceiveFrom(data, ref remote);
-               
+
                 if (recv > 0) // Solo procesar si se recibieron datos
                 {
                     // Convertir solo cuando sea necesario
@@ -164,8 +171,7 @@ public class ClientUDP : MonoBehaviour
                     // Solo procesar mensajes relevantes
                     if (receivedMessage.Contains("Position:"))
                     {
-                        UpdatePositionQueue(receivedMessage);
-                        UpdateRotation(receivedMessage);
+                        UpdateReplicationQueue(receivedMessage);
                     }
                 }
             }
@@ -176,33 +182,51 @@ public class ClientUDP : MonoBehaviour
         }
     }
 
-    void UpdatePositionQueue(string message)
+    void UpdateReplicationQueue(string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split("|");
-        if (positionData.Length == 6)
+        if (positionData.Length == 7)
         {
             float x = float.Parse(positionData[0]);
             float y = float.Parse(positionData[1]);
             float z = float.Parse(positionData[2]);
-            Vector3 newPosition = new Vector3(x, y, z);
-
-            // Agregar la nueva posición a la cola
-            positionQueue.Enqueue(newPosition);
-        }
-    }
-
-    void UpdateRotation(string message)
-    {
-        string[] positionData = message.Split(':')[1].Trim().Split("|");
-        if (positionData.Length == 6)
-        {
             float x_rotation = float.Parse(positionData[3]);
             float y_rotation = float.Parse(positionData[4]);
             float z_rotation = float.Parse(positionData[5]);
-            Vector3 newRotation = new Vector3(x_rotation, y_rotation, z_rotation);
+            bool isHunter = bool.Parse(positionData[6]);
+            GameObject mesh = isHunter ? null : GameObject.FindWithTag("PropMesh");
 
-            // Agregar la nueva rotación a la cola
-            positionQueue.Enqueue(newRotation);
+            ReplicationData newData = new ReplicationData
+            {
+                position = new Vector3(x, y, z),
+                rotation = new Vector3(x_rotation, y_rotation, z_rotation),
+                isHunter = isHunter,
+                mesh = mesh
+            };
+
+            // Agregar la nueva posición y datos a la cola
+            replicationQueue.Enqueue(newData);
+        }
+    }
+
+    void UpdateTeamAndMesh(ReplicationData data)
+    {
+        playerTeamHunter = data.isHunter;
+
+        if (data.isHunter)
+        {
+            // Si el jugador es "Hunter", desactivar mesh transformable y mostrar el modelo principal.
+            serverObject.GetComponent<PlayerToProp>().CaraterMesh.layer = 6;
+            serverObject.GetComponent<PlayerToProp>().CaraterMesh.SetActive(true);
+            serverObject.GetComponent<PlayerToProp>().currentModel.SetActive(false);
+        }
+        else
+        {
+            // Si el jugador es "Hider", mostrar el mesh transformable.
+            if (data.mesh != null)
+            {
+                data.mesh.SetActive(true);
+            }
         }
     }
 
