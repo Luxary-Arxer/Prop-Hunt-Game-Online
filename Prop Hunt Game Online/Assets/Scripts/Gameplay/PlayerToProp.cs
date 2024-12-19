@@ -68,27 +68,7 @@ public class PlayerToProp : MonoBehaviour
             }
         }
 
-        //Funcionalidad de las difrenetes consolas
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            float interact_Range = 2f;
-            Collider[] collider_array = Physics.OverlapSphere(transform.position, interact_Range);
-            foreach (Collider collider in collider_array)
-            {
-                if (collider.TryGetComponent(out ConsoletoHunter Console_Hunter))
-                {
-
-                    Console_Hunter.Interact();
-                    Hunter = true;
-                }
-                if (collider.TryGetComponent(out ConsoletoAlien Console_Alien))
-                {
-                    Console_Alien.Interact();
-                    Hunter = false;
-                }
-                //Debug.Log(collider);
-            }
-        }
+        Consolas();
 
     }
 
@@ -161,4 +141,28 @@ public class PlayerToProp : MonoBehaviour
             Gun.SetActive(true);
         }
     }
+
+    void Consolas()
+    {
+        //Funcionalidad de las difrenetes consolas
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            float interact_Range = 2f;
+            Collider[] collider_array = Physics.OverlapSphere(transform.position, interact_Range);
+            foreach (Collider collider in collider_array)
+            {
+                if (collider.TryGetComponent(out ConsoletoHunter Console_Hunter))
+                {
+                    Console_Hunter.Interact();
+                    Hunter = true;
+                }
+                if (collider.TryGetComponent(out ConsoletoAlien Console_Alien))
+                {
+                    Console_Alien.Interact();
+                    Hunter = false;
+                }
+            }
+        }     
+    }
+
 }
