@@ -197,11 +197,11 @@ public class PlayerToProp : MonoBehaviour
                     Console_Start.Interact();
                     if (Hunter == true)
                     {
-                        transform.position = new Vector3(0, -30, -35);
+                        transform.position = new Vector3(0, -34, 6.5f);
                     }
                     else
                     {
-                        transform.position = new Vector3(0, -30, 35);
+                        transform.position = new Vector3(2, -37, 5);
                     }
                 }
             }

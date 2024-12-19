@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: fe59706edb4d3d74a88ca962706ed06f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - rb: {instanceID: 0}
+  - CameraTransform: {instanceID: 0}
+  - SelectParticle: {instanceID: 0}
+  - SelectEffect: {fileID: 2084918252461113373, guid: b29b0610d3c9f1441a3a9a854f57c2fe,
+      type: 3}
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: 7c55649479bd4cd4581116ab67edec2c, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
