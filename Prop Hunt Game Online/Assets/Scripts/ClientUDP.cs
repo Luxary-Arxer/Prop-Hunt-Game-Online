@@ -20,8 +20,18 @@ public class ClientUDP : MonoBehaviour
     private Vector3 lastPosition;
     private Vector3 lastRotation;
 
+    public GameObject player;
+    private PlayerToProp mesh;
+    public bool TeamHunter = false;
+    public int PlayerProp_Id = -1;
+
+    public GameObject changeOtherPlayer;
+    private Change_OtherPlayers newmesh;
+
     void Start()
     {
+        newmesh = changeOtherPlayer.GetComponent<Change_OtherPlayers>();
+        mesh = player.GetComponent<PlayerToProp>();
         // Inicializar posición y mensaje
         playerPosition = transform.position;
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z;
@@ -72,7 +82,7 @@ public class ClientUDP : MonoBehaviour
         playerPosition = transform.position;
         playerRotation = transform.eulerAngles;
         message = "Position: " + playerPosition.x + "|" + playerPosition.y + "|" + playerPosition.z
-            + "|" + playerRotation.x + "|" + playerRotation.y + "|" + playerRotation.z;
+            + "|" + playerRotation.x + "|" + playerRotation.y + "|" + playerRotation.z + "|" + mesh.PlayerProp_Id + "|" + mesh.TeamHunter;
         //Debug.Log("Posición X " + newPosition_server.x + " Posición Z " + newPosition_server.z);
     }
 
@@ -166,6 +176,7 @@ public class ClientUDP : MonoBehaviour
                     {
                         UpdatePositionQueue(receivedMessage);
                         UpdateRotation(receivedMessage);
+                        UpdateProp(receivedMessage);
                     }
                 }
             }
@@ -179,7 +190,7 @@ public class ClientUDP : MonoBehaviour
     void UpdatePositionQueue(string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split("|");
-        if (positionData.Length == 6)
+        if (positionData.Length == 8)
         {
             float x = float.Parse(positionData[0]);
             float y = float.Parse(positionData[1]);
@@ -194,7 +205,7 @@ public class ClientUDP : MonoBehaviour
     void UpdateRotation(string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split("|");
-        if (positionData.Length == 6)
+        if (positionData.Length == 8)
         {
             float x_rotation = float.Parse(positionData[3]);
             float y_rotation = float.Parse(positionData[4]);
@@ -203,6 +214,18 @@ public class ClientUDP : MonoBehaviour
 
             // Agregar la nueva rotación a la cola
             positionQueue.Enqueue(newRotation);
+        }
+    }
+
+    void UpdateProp(string message)
+    {
+        string[] positionData = message.Split(':')[1].Trim().Split("|");
+        if (positionData.Length == 8)
+        {
+            newmesh.PlayerProp_Id = int.Parse(positionData[6]);
+            newmesh.Hunter = bool.Parse(positionData[7]);
+            Debug.Log("Prophunter" + PlayerProp_Id + "bool:" + TeamHunter);
+
         }
     }
 

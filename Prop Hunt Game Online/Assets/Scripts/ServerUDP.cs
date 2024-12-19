@@ -13,6 +13,10 @@ public class ServerUDP : MonoBehaviour
     Vector3 serverPosition;
     Vector3 serverRotation;
 
+    private PlayerToProp mesh;
+    private bool TeamHunter = false;
+    private int PlayerProp_Id = -1;
+
     // Diccionario para manejar múltiples clientes (clave: EndPoint, valor: datos del cliente)
     private Dictionary<EndPoint, ClientData> clients = new Dictionary<EndPoint, ClientData>();
 
@@ -42,6 +46,7 @@ public class ServerUDP : MonoBehaviour
 
     void Start()
     {
+        mesh = serverPrefab.GetComponent<PlayerToProp>();
         StartServer();
         //serverPrefab = gameObject;
     }
@@ -106,7 +111,7 @@ public class ServerUDP : MonoBehaviour
     void UpdateClientData(EndPoint remote, string message)
     {
         string[] positionData = message.Split(':')[1].Trim().Split("|");
-        if (positionData.Length == 6)
+        if (positionData.Length == 8)
         {
             float x = float.Parse(positionData[0]);
             float y = float.Parse(positionData[1]);
@@ -114,8 +119,11 @@ public class ServerUDP : MonoBehaviour
             float rotX = float.Parse(positionData[3]);
             float rotY = float.Parse(positionData[4]);
             float rotZ = float.Parse(positionData[5]);
-
+            mesh.PlayerProp_Id = int.Parse(positionData[6]);
+            mesh.TeamHunter = bool.Parse(positionData[7]);
             bool isNewClient = !clients.ContainsKey(remote);
+
+            Debug.Log("Prophunter" + PlayerProp_Id + "bool:" + TeamHunter);
 
             lock (clientUpdateQueue)
             {
@@ -159,7 +167,7 @@ public class ServerUDP : MonoBehaviour
 
             // Construir el mensaje con los datos del servidor
             string messageToSend = $"Position:{serverPosition.x}|{serverPosition.y}|{serverPosition.z}|" +
-                                   $"{serverRotation.x}|{serverRotation.y}|{serverRotation.z}";
+                                   $"{serverRotation.x}|{serverRotation.y}|{serverRotation.z}|{mesh.PlayerProp_Id}|{mesh.TeamHunter}";
             foreach (var client in clients)
             {
                 EndPoint clientEndPoint = client.Key;

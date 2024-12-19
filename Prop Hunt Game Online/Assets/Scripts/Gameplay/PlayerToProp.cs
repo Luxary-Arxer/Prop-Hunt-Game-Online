@@ -6,7 +6,7 @@ public class PlayerToProp : MonoBehaviour
     [SerializeField] private GameObject currentModel; // El modelo actual del jugador
     [SerializeField] private float transformDistance = 5f; // Distancia máxima para transformarse
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
-    [SerializeField] public bool TeamHunter = false;
+    [SerializeField] public bool TeamHunter = false;//enviar
     public GameObject CaraterMesh;
 
     public GameObject GunMesh;
@@ -27,7 +27,7 @@ public class PlayerToProp : MonoBehaviour
 
 
     //Id del objeto
-    public int PlayerProp_Id;
+    public int PlayerProp_Id;// enviar
     public GameObject Mest_Player;
     public void ReadProp_Id()
     {
