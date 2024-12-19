@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerToProp : MonoBehaviour
 {
     [SerializeField] private Transform modelParent; // El contenedor de modelos
-    [SerializeField] public GameObject currentModel; // El modelo actual del jugador
+    [SerializeField] private GameObject currentModel; // El modelo actual del jugador
     [SerializeField] private float transformDistance = 5f; // Distancia máxima para transformarse
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
     [SerializeField] public bool Hunter = false;
