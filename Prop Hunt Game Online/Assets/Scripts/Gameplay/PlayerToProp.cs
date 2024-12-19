@@ -163,14 +163,14 @@ public class PlayerToProp : MonoBehaviour
                 }
                 if (collider.TryGetComponent(out ConsoletoStart Console_Start))
                 {
-                    Console_Alien.Interact();
+                    Console_Start.Interact();
                     if (Hunter == true)
                     {
-
+                        transform.position = new Vector3(0, -30, -35);
                     }
                     else
                     {
-
+                        transform.position = new Vector3(0, -30, 35);
                     }
                 }
             }
