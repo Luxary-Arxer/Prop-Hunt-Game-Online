@@ -74,7 +74,6 @@ public class PlayerToProp : MonoBehaviour
             {
                 Debug.Log("Apuntando a un objeto transformable: " + hit.collider.name);
 
-
                 // Si presionamos 'F' nos transformamos en el objeto
                 if (Input.GetKeyDown(KeyCode.F))
                 {
