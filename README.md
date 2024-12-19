@@ -13,7 +13,7 @@ antes de que se acabe el tiempo estos perderán.
 
 Enlace a Github: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online
 
-Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/releases
+Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/releases/tag/Ejercico_4
 
 
 - Build (.exe)
@@ -31,7 +31,7 @@ Abre dos instancias del juego, en la que quieras que sea el Server clica su bot�
 
 ###General
 
-WASD -> Movimento
+WASD -> Movimiento
 
 Space -> Saltar
 
@@ -45,7 +45,7 @@ Left mouse -> Shot
 
 F -> Transformar en objeto que estas mirando
 
-R -> Anular trangormaciones
+R -> Anular triangulaciones
 
 # Contribuciones
 
@@ -81,3 +81,4 @@ R -> Anular trangormaciones
 
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
+- Arreglado el error que no te permitía conectar-se a otro ordenador en que este en una red local
