@@ -6,7 +6,7 @@ public class PlayerToProp : MonoBehaviour
     [SerializeField] private GameObject currentModel; // El modelo actual del jugador
     [SerializeField] private float transformDistance = 5f; // Distancia máxima para transformarse
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
-    [SerializeField] public bool Hunter = false;
+    [SerializeField] public bool TeamHunter = false;
     public GameObject CaraterMesh;
 
     public GameObject GunMesh;
@@ -53,11 +53,11 @@ public class PlayerToProp : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            Hunter = !Hunter;
+            TeamHunter = !TeamHunter;
         }
         PlayerTeam();
 
-        if (Hunter == true){
+        if (TeamHunter == true){
             CaraterMesh.layer = 6;
             CaraterMesh.SetActive(true);
             currentModel.SetActive(false);
@@ -65,7 +65,7 @@ public class PlayerToProp : MonoBehaviour
 
         }
         // Para saver que tipo de player es
-        if (Hunter == false)
+        if (TeamHunter == false)
         {
             ReadProp_Id();
             CaraterMesh.layer = 7;
@@ -170,7 +170,7 @@ public class PlayerToProp : MonoBehaviour
     //Mira la variable y canvia que pude hacer el player
     void PlayerTeam()
     {
-        if (Hunter == false)
+        if (TeamHunter == false)
         {
             Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
             materials[0] = Material_Alien;
@@ -198,17 +198,17 @@ public class PlayerToProp : MonoBehaviour
                 if (collider.TryGetComponent(out ConsoletoHunter Console_Hunter))
                 {
                     Console_Hunter.Interact();
-                    Hunter = true;
+                    TeamHunter = true;
                 }
                 if (collider.TryGetComponent(out ConsoletoAlien Console_Alien))
                 {
                     Console_Alien.Interact();
-                    Hunter = false;
+                    TeamHunter = false;
                 }
                 if (collider.TryGetComponent(out ConsoletoStart Console_Start))
                 {
                     Console_Start.Interact();
-                    if (Hunter == true)
+                    if (TeamHunter == true)
                     {
                         transform.position = new Vector3(0, -34, 6.5f);
                     }
