@@ -84,6 +84,8 @@ R -> Anular triangulaciones
 
 - Los multiples clientes solo los ve el servidor.
 
+- Replicator Manager no funciona
+
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
 - Arreglado el error que no te permitía conectar-se a otro ordenador en que este en una red local.
