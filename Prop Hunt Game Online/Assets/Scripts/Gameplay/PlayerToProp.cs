@@ -161,6 +161,18 @@ public class PlayerToProp : MonoBehaviour
                     Console_Alien.Interact();
                     Hunter = false;
                 }
+                if (collider.TryGetComponent(out ConsoletoStart Console_Start))
+                {
+                    Console_Alien.Interact();
+                    if (Hunter == true)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                }
             }
         }     
     }
