@@ -1,4 +1,5 @@
-# Prop Hunt Game
+# Hunt down the mimics
+
 Creación de prototipo de videojuego prop hunt online en la version  2022.3.33f1  en unity
 
 Cada partida se compondrá por 2 equipos y un timer el cual ira
@@ -75,10 +76,20 @@ R -> Anular triangulaciones
 
 • Transformar los players en props
 
+• Intento Replicaition manager (No funciona)
+
 # Dificultades, comentarios o errores
 
-- No funcionan los controles del Hunter
+- No funcionan los controles del Hunter.
+
+- Los multiples clientes solo los ve el servidor.
+
+- Replicator Manager no funciona
 
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
-- Arreglado el error que no te permitía conectar-se a otro ordenador en que este en una red local
+- Arreglado el error que no te permitía conectar-se a otro ordenador en que este en una red local.
+
+- Añadido funcionalidad de transformar-se en props.
+
+- Los ortos jugadores dejan de estar en T-pose
