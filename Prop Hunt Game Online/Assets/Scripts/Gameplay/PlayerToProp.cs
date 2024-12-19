@@ -25,17 +25,19 @@ public class PlayerToProp : MonoBehaviour
     public Material Material_Hunter, Material_Alien;
 
 
-    /*
+
     //Id del objeto
     public int PlayerProp_Id;
     public GameObject Mest_Player;
     public void ReadProp_Id()
     {
         IDProps NewProp = Mest_Player.GetComponentInChildren<IDProps>();
+        if (Mest_Player.GetComponentInChildren<IDProps>() != null)
+        {
+            PlayerProp_Id = NewProp.Id_Prop;
+        }
 
-        PlayerProp_Id = NewProp.Id_Prop;
     }
-    */
     private void Start()
     {
         PlayerTeam();
@@ -65,7 +67,7 @@ public class PlayerToProp : MonoBehaviour
         // Para saver que tipo de player es
         if (Hunter == false)
         {
-            //ReadProp_Id();
+            ReadProp_Id();
             CaraterMesh.layer = 7;
             // Verificar si el rayo impacta con un objeto en la capa transformable
             if (Physics.Raycast(ray, out hit, transformDistance, transformLayer))
