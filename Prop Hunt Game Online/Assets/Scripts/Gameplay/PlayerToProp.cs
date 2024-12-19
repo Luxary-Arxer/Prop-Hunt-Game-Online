@@ -8,10 +8,14 @@ public class PlayerToProp : MonoBehaviour
     [SerializeField] private LayerMask transformLayer; // Capa de los objetos transformables
     [SerializeField] public bool Hunter = false;
     public GameObject CaraterMesh;
-    public GameObject Gun;
 
+    public GameObject GunMesh;
+    [SerializeField] private LayerMask Enemy_Layer; // Capa de los enemigos
+    [SerializeField] private float ShootDistance = 50f; // Distancia máxima para transformarse
+    public float Damage = 1;
+    public float DamageRange;
     //Cada player tiene 3 de vida
-    public float vida = 3;
+    public float Vida = 3;
 
     public GameObject transformTarget; // Referencia al objeto en el que te transformas.
     private Collider originalCollider;  // Colisionador original del jugador.
@@ -43,6 +47,8 @@ public class PlayerToProp : MonoBehaviour
             CaraterMesh.layer = 6;
             CaraterMesh.SetActive(true);
             currentModel.SetActive(false);
+            Shoot();
+
         }
         // Para saver que tipo de player es
         if (Hunter == false)
@@ -73,6 +79,28 @@ public class PlayerToProp : MonoBehaviour
 
         Consolas();
 
+    }
+
+    public void Shoot()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, ShootDistance, Enemy_Layer))
+        {
+            Debug.Log("Apuntando a un objeto Disparable: " + hit.collider.name);
+
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                if (hit.collider.gameObject.TryGetComponent(out PlayerToProp enemy))
+                {
+                    enemy.Vida -= 1;
+                }
+                if (hit.collider.gameObject.TryGetComponent(out PlayerToProp dumy))
+                {
+                    dumy.Vida -= 1;
+                }
+            }
+        }
     }
 
     private void TransformIntoObject(GameObject targetObject)
@@ -134,14 +162,14 @@ public class PlayerToProp : MonoBehaviour
             Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
             materials[0] = Material_Alien;
             Player_Renderer.sharedMaterials = materials;
-            Gun.SetActive(false);
+            GunMesh.SetActive(false);
         }
         else
         {
             Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
             materials[0] = Material_Hunter;
             Player_Renderer.sharedMaterials = materials;
-            Gun.SetActive(true);
+            GunMesh.SetActive(true);
         }
     }
 

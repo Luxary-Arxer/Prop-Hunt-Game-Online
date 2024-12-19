@@ -20,7 +20,34 @@ Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/r
 - Vídeo con demo explicando lo que se está entregando
 - Paquete Unity
 
-# Contribuciones de cada miembro
+# Instrucciones
+ 
+Escena principal: Home
+
+Ejecutar el programa dos veces en el mismo ordenador o en diferentes ordenadores concertados en la misma red.
+Abre dos instancias del juego, en la que quieras que sea el Server clica su botón correspondiente, el la del cliente introduce la Dirección IPv4 donde pone "Id Server" i presión el botón de join.
+
+# Controles
+
+###General
+
+WASD -> Movimento
+
+Space -> Saltar
+
+Shift -> Run
+
+### Hunter
+
+Left mouse -> Shot
+
+###General
+
+F -> Transformar en objeto que estas mirando
+
+R -> Anular trangormaciones
+
+# Contribuciones
 
 ### Nixon Correa:
 
@@ -30,29 +57,27 @@ Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/r
 
 • Enviar datos del servidor y recibir-los al cliente.
 
+• Conectar mas de un cliente al servidor
+
 ### Enric Arxer:
 
 • Concepción básica del servidor.
 
-• uso de información del cliente para rotar objeto.
+• Uso de información del cliente para rotar objeto.
 
-• generar jugador en el servidor cuando se realiza la conexión.
+• Generar jugador en el servidor cuando se realiza la conexión.
+
+• Caviar el jugador entre Hunter y Alien
 
 ### Guillem Aixut:
 
 • Enviar datos del cliente y recibir-los al servidor.
 
-# Instrucciones
- 
-Escena principal: Home
-
-Ejecutar el programa dos veces en el mismo ordenador o en diferentes ordenadores concetados en la misma red.
-Habre dos instancias del juego, en la que quieras que sea el sevrer clica su boton corespondiente, el la del ciente introduce la Dirección IPv4 donde pone "Id Server" i persion el boton de join.
-
+• Transformar los players en props
 
 # Dificultades, comentarios o errores
 
-- Puede dar error si es con dos builds, la solución es tener una instancia abierta en el unity
+- Error 1
 
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
