@@ -61,6 +61,7 @@ public class PlayerToProp : MonoBehaviour
             CaraterMesh.layer = 6;
             CaraterMesh.SetActive(true);
             currentModel.SetActive(false);
+            PlayerProp_Id = -2;
             Shoot();
 
         }
