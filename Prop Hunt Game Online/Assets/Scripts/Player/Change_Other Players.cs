@@ -44,11 +44,41 @@ public class Change_OtherPlayers : MonoBehaviour
                     currentModel.SetActive(false);
                     break;
                 case -1:
-                    
+                    CaraterMesh.SetActive(true);
+                    currentModel.SetActive(false);
                     break;
                 case 0:
                     Tranform(Props[1]);
                     break;
+
+                case 1:
+                    Tranform(Props[2]);
+                    break;
+                case 2:
+                    Tranform(Props[3]);
+                    break;
+                case 3:
+                    Tranform(Props[4]);
+                    break;
+                case 4:
+                    Tranform(Props[5]);
+                    break;
+                case 5:
+                    Tranform(Props[6]);
+                    break;
+                case 6:
+                    Tranform(Props[7]);
+                    break;
+                case 7:
+                    Tranform(Props[8]);
+                    break;
+                case 8:
+                    Tranform(Props[9]);
+                    break;
+                case 9:
+                    Tranform(Props[10]);
+                    break;
+
 
             }
         }
