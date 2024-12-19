@@ -10,6 +10,9 @@ public class PlayerToProp : MonoBehaviour
     public GameObject CaraterMesh;
     public GameObject Gun;
 
+    //Cada player tiene 3 de vida
+    public float vida = 3;
+
     public GameObject transformTarget; // Referencia al objeto en el que te transformas.
     private Collider originalCollider;  // Colisionador original del jugador.
 
