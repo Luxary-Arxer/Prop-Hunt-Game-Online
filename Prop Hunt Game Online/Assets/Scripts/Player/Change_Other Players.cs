@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Change_OtherPlayers : MonoBehaviour
 {
+    [SerializeField] private Transform modelParent; // El contenedor de modeloss
     [SerializeField] private GameObject currentModel; // El modelo actual del jugador
     [SerializeField] public bool Hunter = false;
     public GameObject CaraterMesh;
@@ -12,6 +13,8 @@ public class Change_OtherPlayers : MonoBehaviour
     public SkinnedMeshRenderer Player_Renderer;
     public Material Material_Hunter, Material_Alien;
     // Start is called before the first frame update
+
+    public List<GameObject> Props = new List<GameObject>();
     void Start()
     {
         PlayerTeam();
@@ -33,7 +36,36 @@ public class Change_OtherPlayers : MonoBehaviour
         if (Hunter == false)
         {
             CaraterMesh.layer = 7;
+
+            switch (PlayerProp_Id)
+            {
+                case -2:
+                    CaraterMesh.SetActive(true);
+                    currentModel.SetActive(false);
+                    break;
+                case -1:
+                    
+                    break;
+                case 0:
+                    Tranform(Props[1]);
+                    break;
+
+            }
         }
+    }
+
+    void Tranform(GameObject NewProp)
+    {
+        CaraterMesh.SetActive(false);
+        Destroy(currentModel);
+        // Crear un nuevo modelo basado en el objetivo
+        GameObject newModel = Instantiate(NewProp, modelParent);
+        newModel.layer = 7;
+        newModel.transform.localPosition = new Vector3(0f, 0.6f, -0.5f);
+        newModel.transform.localRotation = Quaternion.identity;
+
+        // Actualizar la referencia del modelo actual
+        currentModel = newModel;
     }
     void PlayerTeam()
     {
