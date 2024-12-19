@@ -88,3 +88,5 @@ R -> Anular triangulaciones
 - Arreglado el error que no te permitía conectar-se a otro ordenador en que este en una red local.
 
 - Añadido funcionalidad de transformar-se en props.
+
+- Los ortos jugadores dejan de estar en T-pose
