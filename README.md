@@ -3,8 +3,8 @@ Creación de prototipo de videojuego prop hunt online en la version  2022.3.33f1
 
 Cada partida se compondrá por 2 equipos y un timer el cual ira
 descendiendo hasta 0.
-Uno de los equipos es el que se esconde “Hiders” y el otro es el que ha de buscar y
-eliminar a las que se esconden “Hunters”, los Hiders tiene la habilidad de transformarse
+Uno de los equipos es el que se esconde “Aliens” y el otro es el que ha de buscar y
+eliminar a las que se esconden “Hunters”, los Aliens tiene la habilidad de transformarse
 en objetos del entorno para camuflarse y evitar ser descubiertos, pero cada cierto tiempo
 emiten un sonido para dar pistas a los Hunters, por otro lado los Hunters tienen armas
 que sirven para eliminar a los Hiders a distancia pero estos empiezan a jugar un cierto
@@ -29,7 +29,7 @@ Abre dos instancias del juego, en la que quieras que sea el Server clica su bot�
 
 # Controles
 
-###General
+### General
 
 WASD -> Movimiento
 
@@ -41,7 +41,7 @@ Shift -> Run
 
 Left mouse -> Shot
 
-###General
+### Alien
 
 F -> Transformar en objeto que estas mirando
 
@@ -77,7 +77,7 @@ R -> Anular triangulaciones
 
 # Dificultades, comentarios o errores
 
-- Error 1
+- No funcionan los controles del Hunter
 
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
