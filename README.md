@@ -76,7 +76,7 @@ R -> Anular triangulaciones
 
 • Transformar los players en props
 
-• 
+• Intento Replicaition manager (No funciona)
 
 # Dificultades, comentarios o errores
 
