@@ -75,10 +75,16 @@ R -> Anular triangulaciones
 
 • Transformar los players en props
 
+• 
+
 # Dificultades, comentarios o errores
 
-- No funcionan los controles del Hunter
+- No funcionan los controles del Hunter.
+
+- Los multiples clientes solo los ve el servidor.
 
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
-- Arreglado el error que no te permitía conectar-se a otro ordenador en que este en una red local
+- Arreglado el error que no te permitía conectar-se a otro ordenador en que este en una red local.
+
+- Añadido funcionalidad de transformar-se en props.
