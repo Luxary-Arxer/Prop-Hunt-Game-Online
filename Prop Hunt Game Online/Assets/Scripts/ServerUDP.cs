@@ -13,6 +13,8 @@ public class ServerUDP : MonoBehaviour
     Vector3 serverPosition;
     Vector3 serverRotation;
 
+    private Change_OtherPlayers newmesh;
+
     private PlayerToProp mesh;
     private bool TeamHunter = false;
     private int PlayerProp_Id = -1;
@@ -42,11 +44,13 @@ public class ServerUDP : MonoBehaviour
         public Vector3 position;
         public Vector3 rotation;
         public bool isNewClient;
+        public int playerPropId;
     }
 
     void Start()
     {
         mesh = serverPrefab.GetComponent<PlayerToProp>();
+        newmesh = clientPrefab.GetComponent<Change_OtherPlayers>();
         StartServer();
         //serverPrefab = gameObject;
     }
@@ -119,11 +123,12 @@ public class ServerUDP : MonoBehaviour
             float rotX = float.Parse(positionData[3]);
             float rotY = float.Parse(positionData[4]);
             float rotZ = float.Parse(positionData[5]);
-            //mesh.PlayerProp_Id = int.Parse(positionData[6]);
-            //mesh.TeamHunter = bool.Parse(positionData[7]);
+            int playerPropId = int.Parse(positionData[6]);
+            
+            bool teamHunter = bool.Parse(positionData[7]);
             bool isNewClient = !clients.ContainsKey(remote);
 
-            Debug.Log("Prophunter" + PlayerProp_Id + "bool:" + TeamHunter);
+            Debug.Log("Prophunter" + newmesh.PlayerProp_Id + "bool:" + newmesh.Hunter);
 
             lock (clientUpdateQueue)
             {
@@ -132,7 +137,8 @@ public class ServerUDP : MonoBehaviour
                     remote = remote,
                     position = new Vector3(x, y, z),
                     rotation = new Vector3(rotX, rotY, rotZ),
-                    isNewClient = isNewClient
+                    isNewClient = isNewClient,
+                    playerPropId = playerPropId
                 });
             }
         }
@@ -218,6 +224,7 @@ public class ServerUDP : MonoBehaviour
                         GameObject playerObject = clients[clientUpdate.remote].playerObject;
                         playerObject.transform.position = clientUpdate.position;
                         playerObject.transform.eulerAngles = clientUpdate.rotation;
+                        playerObject.GetComponent<Change_OtherPlayers>().PlayerProp_Id = clientUpdate.playerPropId;
 
                         Debug.Log("Posición actualizada del jugador " + clientUpdate.remote.ToString() + ": " + clientUpdate.position);
                     }
