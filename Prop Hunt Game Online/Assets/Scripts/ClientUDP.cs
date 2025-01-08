@@ -222,9 +222,13 @@ public class ClientUDP : MonoBehaviour
         string[] positionData = message.Split(':')[1].Trim().Split("|");
         if (positionData.Length == 8)
         {
-            newmesh.PlayerProp_Id = int.Parse(positionData[6]);
+            if (int.Parse(positionData[6]) != 0)
+            {
+                newmesh.PlayerProp_Id = int.Parse(positionData[6]);
+                
+            }
             newmesh.Hunter = bool.Parse(positionData[7]);
-            Debug.Log("Prophunter" + PlayerProp_Id + "bool:" + TeamHunter);
+            Debug.Log("Prophunter" + newmesh.PlayerProp_Id + "bool:" + newmesh.Hunter);
 
         }
     }

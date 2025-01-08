@@ -23,6 +23,7 @@ public class Change_OtherPlayers : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         PlayerTeam();
 
         if (Hunter == true)
@@ -86,14 +87,18 @@ public class Change_OtherPlayers : MonoBehaviour
 
     void Tranform(GameObject NewProp)
     {
+        Debug.Log("AAAAAAAAAAAAAAAAAAAAAA" + PlayerProp_Id);
         CaraterMesh.SetActive(false);
-        Destroy(currentModel);
+        if (currentModel != null)
+        {
+            Destroy(currentModel); // Destruir el modelo anterior
+        }
         // Crear un nuevo modelo basado en el objetivo
         GameObject newModel = Instantiate(NewProp, modelParent);
         newModel.layer = 7;
         newModel.transform.localPosition = new Vector3(0f, 0.6f, -0.5f);
         newModel.transform.localRotation = Quaternion.identity;
-
+        Debug.Log("BBBBBBBBBBBBBBBBBBBBBBBB" + PlayerProp_Id);
         // Actualizar la referencia del modelo actual
         currentModel = newModel;
     }

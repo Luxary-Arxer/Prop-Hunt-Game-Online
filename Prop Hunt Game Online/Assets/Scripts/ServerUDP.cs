@@ -119,8 +119,8 @@ public class ServerUDP : MonoBehaviour
             float rotX = float.Parse(positionData[3]);
             float rotY = float.Parse(positionData[4]);
             float rotZ = float.Parse(positionData[5]);
-            mesh.PlayerProp_Id = int.Parse(positionData[6]);
-            mesh.TeamHunter = bool.Parse(positionData[7]);
+            //mesh.PlayerProp_Id = int.Parse(positionData[6]);
+            //mesh.TeamHunter = bool.Parse(positionData[7]);
             bool isNewClient = !clients.ContainsKey(remote);
 
             Debug.Log("Prophunter" + PlayerProp_Id + "bool:" + TeamHunter);
@@ -168,6 +168,8 @@ public class ServerUDP : MonoBehaviour
             // Construir el mensaje con los datos del servidor
             string messageToSend = $"Position:{serverPosition.x}|{serverPosition.y}|{serverPosition.z}|" +
                                    $"{serverRotation.x}|{serverRotation.y}|{serverRotation.z}|{mesh.PlayerProp_Id}|{mesh.TeamHunter}";
+            
+                Debug.Log($"ID Mesh" +  mesh.PlayerProp_Id);
             foreach (var client in clients)
             {
                 EndPoint clientEndPoint = client.Key;
