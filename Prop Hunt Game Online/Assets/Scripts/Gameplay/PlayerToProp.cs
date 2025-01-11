@@ -68,6 +68,7 @@ public class PlayerToProp : MonoBehaviour
         // Para saver que tipo de player es
         if (TeamHunter == false)
         {
+            PlayerProp_Id = -1;
             ReadProp_Id();
             CaraterMesh.layer = 7;
             // Verificar si el rayo impacta con un objeto en la capa transformable
