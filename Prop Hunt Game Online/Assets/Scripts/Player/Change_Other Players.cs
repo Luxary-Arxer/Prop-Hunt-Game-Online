@@ -87,7 +87,6 @@ public class Change_OtherPlayers : MonoBehaviour
 
     void Tranform(GameObject NewProp)
     {
-        Debug.Log("AAAAAAAAAAAAAAAAAAAAAA" + PlayerProp_Id);
         CaraterMesh.SetActive(false);
         if (currentModel != null)
         {
@@ -98,7 +97,6 @@ public class Change_OtherPlayers : MonoBehaviour
         newModel.layer = 7;
         newModel.transform.localPosition = new Vector3(0f, 0.6f, -0.5f);
         newModel.transform.localRotation = Quaternion.identity;
-        Debug.Log("BBBBBBBBBBBBBBBBBBBBBBBB" + PlayerProp_Id);
         // Actualizar la referencia del modelo actual
         currentModel = newModel;
     }
