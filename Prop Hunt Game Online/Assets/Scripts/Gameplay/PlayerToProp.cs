@@ -75,7 +75,7 @@ public class PlayerToProp : MonoBehaviour
             }
             else
             {
-                if (Input.GetMouseButton(0) && timer <= 0)
+                if (Input.GetMouseButtonDown(0) && timer <= 0)
                 {
                     Shoot();
                 }
@@ -230,9 +230,8 @@ public class PlayerToProp : MonoBehaviour
     public GameObject bulletPrefab;
     public GameObject bulletholder;
 
-
     private float timer;
-    public GameObject Player;
+
 
     void Shoot()
     {
