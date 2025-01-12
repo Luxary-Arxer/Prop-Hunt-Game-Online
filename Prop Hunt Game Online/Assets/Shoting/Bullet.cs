@@ -9,17 +9,20 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
-        lifeTime -= Time.deltaTime;
 
+        lifeTime -= Time.deltaTime;
+        //Debug.Log(lifeTime);
         if (lifeTime < 0)
             Destroy(gameObject);
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<Dummy>() != null)
-            other.GetComponent<Dummy>().health -= damage;
-
+        {
+            other.GetComponent<Dummy>().CurrentHealth -= damage;
+        }
         Destroy(gameObject);
     }
 }

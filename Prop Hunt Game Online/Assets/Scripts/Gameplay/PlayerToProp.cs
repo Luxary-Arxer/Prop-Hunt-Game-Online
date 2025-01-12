@@ -238,7 +238,6 @@ public class PlayerToProp : MonoBehaviour
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawnTransform.position, Quaternion.identity, bulletholder.transform);
         bullet.GetComponent<Rigidbody>().AddForce(bulletSpawnTransform.forward * bulletSpeed, ForceMode.Impulse);
         bullet.GetComponent<Bullet>().damage = bulletDamage;
-
         timer = 1;
     }
 }
