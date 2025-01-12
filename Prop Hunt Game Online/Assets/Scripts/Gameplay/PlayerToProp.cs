@@ -62,7 +62,24 @@ public class PlayerToProp : MonoBehaviour
             CaraterMesh.SetActive(true);
             currentModel.SetActive(false);
             PlayerProp_Id = -2;
-            Shoot();
+            //Shoter
+            if (timer > 0)
+                timer -= Time.deltaTime / fireRate;
+
+            if (isAuto)
+            {
+                if (Input.GetMouseButton(0) && timer <= 0)
+                {
+                    Shoot();
+                }
+            }
+            else
+            {
+                if (Input.GetMouseButton(0) && timer <= 0)
+                {
+                    Shoot();
+                }
+            }
 
         }
         // Para saver que tipo de player es
@@ -96,27 +113,6 @@ public class PlayerToProp : MonoBehaviour
 
     }
 
-    public void Shoot()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, ShootDistance, Enemy_Layer))
-        {
-            Debug.Log("Apuntando a un objeto Disparable: " + hit.collider.name);
-
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                if (hit.collider.gameObject.TryGetComponent(out PlayerToProp enemy))
-                {
-                    enemy.Vida -= 1;
-                }
-                if (hit.collider.gameObject.TryGetComponent(out PlayerToProp dumy))
-                {
-                    dumy.Vida -= 1;
-                }
-            }
-        }
-    }
 
     private void TransformIntoObject(GameObject targetObject)
     {
@@ -223,4 +219,27 @@ public class PlayerToProp : MonoBehaviour
         }     
     }
 
+    //Shoter
+    [Header("Bullet Variables")]
+    public float bulletSpeed;
+    public float fireRate, bulletDamage;
+    public bool isAuto;
+
+    [Header("Initial Setup")]
+    public Transform bulletSpawnTransform;
+    public GameObject bulletPrefab;
+    public GameObject bulletholder;
+
+
+    private float timer;
+    public GameObject Player;
+
+    void Shoot()
+    {
+        GameObject bullet = Instantiate(bulletPrefab, bulletSpawnTransform.position, Quaternion.identity, bulletholder.transform);
+        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawnTransform.forward * bulletSpeed, ForceMode.Impulse);
+        bullet.GetComponent<Bullet>().damage = bulletDamage;
+
+        timer = 1;
+    }
 }
