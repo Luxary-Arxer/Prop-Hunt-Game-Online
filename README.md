@@ -86,17 +86,15 @@ Right mouse -> Anular transformación
 
 # Dificultades, comentarios o errores
 
-- No funcionan los controles del Hunter.
+- La pistola només funciona amb els dumy's.
 
-- Los multiples clientes solo los ve el servidor.
-
-- Replicator Manager no funciona
+- Les bales y els countdown son locals.
 
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
-- Los clientes se vean entre ellos
+- Los clientes se vean entre ellos y en que se transforman 
 
-- La pistola de los cazadores
+- La pistola de los cazadores.
 
-- Contador per començar i durant la partida
+- Contador per començar i durant la partida.
 
