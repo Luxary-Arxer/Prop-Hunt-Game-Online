@@ -70,6 +70,7 @@ public class PlayerToProp : MonoBehaviour
             {
                 if (Input.GetMouseButton(0) && timer <= 0)
                 {
+
                     Shoot();
                 }
             }
@@ -77,6 +78,7 @@ public class PlayerToProp : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(0) && timer <= 0)
                 {
+                   Debug.Log("Shoot");
                     Shoot();
                 }
             }
@@ -231,7 +233,6 @@ public class PlayerToProp : MonoBehaviour
     public GameObject bulletholder;
 
     private float timer;
-
 
     void Shoot()
     {
