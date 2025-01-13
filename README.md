@@ -14,7 +14,7 @@ antes de que se acabe el tiempo estos perderán.
 
 Enlace a Github: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online
 
-Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/releases/tag/Ejercico_4
+Enlace a Github Release: https://github.com/Luxary-Arxer/Prop-Hunt-Game-Online/releases/tag/Final_delivery
 
 
 - Build (.exe)
@@ -74,6 +74,8 @@ Right mouse -> Anular transformación
 
 • Funcionamiento pistola y Dummy del lobby
 
+• Contador per començar i durant la partida
+
 ### Guillem Aixut:
 
 • Enviar datos del cliente y recibir-los al servidor.
@@ -95,4 +97,6 @@ Right mouse -> Anular transformación
 - Los clientes se vean entre ellos
 
 - La pistola de los cazadores
+
+- Contador per començar i durant la partida
 
