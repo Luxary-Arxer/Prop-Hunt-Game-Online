@@ -40,13 +40,13 @@ Shift -> Run
 
 ### Hunter
 
-Left mouse -> Shot
+Left mouse -> Disparar
 
 ### Alien
 
-F -> Transformar en objeto que estas mirando
+Left mouse -> Transformar en objeto que estas mirando
 
-R -> Anular triangulaciones
+Right mouse -> Anular transformación
 
 # Contribuciones
 
@@ -60,6 +60,8 @@ R -> Anular triangulaciones
 
 • Conectar mas de un cliente al servidor
 
+• Que los clientes se vean entre ellos
+
 ### Enric Arxer:
 
 • Concepción básica del servidor.
@@ -69,6 +71,8 @@ R -> Anular triangulaciones
 • Generar jugador en el servidor cuando se realiza la conexión.
 
 • Caviar el jugador entre Hunter y Alien
+
+• Funcionamiento pistola y Dummy del lobby
 
 ### Guillem Aixut:
 
@@ -88,8 +92,7 @@ R -> Anular triangulaciones
 
 # Cuando sea relevante, lista de mejoras de entregas anteriores
 
-- Arreglado el error que no te permitía conectar-se a otro ordenador en que este en una red local.
+- Los clientes se vean entre ellos
 
-- Añadido funcionalidad de transformar-se en props.
+- La pistola de los cazadores
 
-- Los ortos jugadores dejan de estar en T-pose

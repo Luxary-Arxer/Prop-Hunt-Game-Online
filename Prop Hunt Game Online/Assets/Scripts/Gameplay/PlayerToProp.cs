@@ -10,7 +10,6 @@ public class PlayerToProp : MonoBehaviour
     public GameObject CaraterMesh;
 
     public GameObject GunMesh;
-    [SerializeField] private LayerMask Enemy_Layer; // Capa de los enemigos
     [SerializeField] private float ShootDistance = 50f; // Distancia máxima para transformarse
     public float Damage = 1;
     public float DamageRange;
@@ -70,7 +69,6 @@ public class PlayerToProp : MonoBehaviour
             {
                 if (Input.GetMouseButton(0) && timer <= 0)
                 {
-
                     Shoot();
                 }
             }
@@ -78,7 +76,6 @@ public class PlayerToProp : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(0) && timer <= 0)
                 {
-                   Debug.Log("Shoot");
                     Shoot();
                 }
             }
@@ -96,13 +93,13 @@ public class PlayerToProp : MonoBehaviour
                 Debug.Log("Apuntando a un objeto transformable: " + hit.collider.name);
 
                 // Si presionamos 'F' nos transformamos en el objeto
-                if (Input.GetKeyDown(KeyCode.F))
+                if (Input.GetMouseButtonDown(0))
                 {
                     TransformIntoObject(hit.collider.gameObject);
                 }
             }
             // Si presionamos 'R' resetea el mash al inical
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetMouseButtonDown(1))
             {
                 CaraterMesh.SetActive(true);
                 currentModel.SetActive(false);
