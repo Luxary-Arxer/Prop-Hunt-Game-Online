@@ -214,6 +214,10 @@ public class PlayerToProp : MonoBehaviour
                         transform.position = new Vector3(2, -37, 5);
                     }
                 }
+                if (collider.TryGetComponent(out Doors_Coutdown Console_StartMatch))
+                {
+                    Console_StartMatch.StartCoroutine("Countdown", Console_StartMatch.StartCoutdown);
+                }
             }
         }     
     }
