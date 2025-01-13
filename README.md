@@ -86,7 +86,7 @@ Right mouse -> Anular transformación
 
 # Dificultades, comentarios o errores
 
-- La pistola només funciona amb els dumy's.
+- La pistola només funciona amb els dumy's y no pots apuntar, dispara a davant del mesh.
 
 - Les bales y els countdown son locals.
 
