@@ -102,7 +102,7 @@ public class Change_OtherPlayers : MonoBehaviour
     }
     void PlayerTeam()
     {
-        if (Hunter == false)
+        if (PlayerProp_Id == -1)
         {
             Material[] materials = new Material[Player_Renderer.sharedMaterials.Length];
             materials[0] = Material_Alien;

@@ -23,6 +23,14 @@ public class Bullet : MonoBehaviour
         {
             other.GetComponent<Dummy>().CurrentHealth -= damage;
         }
+        if (other.GetComponent<PlayerToProp>() != null)
+        {
+            if (other.GetComponent<PlayerToProp>().PlayerProp_Id == -1)
+            {
+                other.GetComponent<PlayerToProp>().Vida -= damage;
+            }
+
+        }
         Destroy(gameObject);
     }
 }
